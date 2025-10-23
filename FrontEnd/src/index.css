@@ -1,1 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
+* {font-family: "Outfit", sans-serif}
+/* Define base typography styles for your design system */
+@layer base {
+  /* Font Family & Base Rules */
+  :root {
+    --font-primary: "Poppins", "Inter", "Roboto", sans-serif;
+  }
+
+  html {
+    font-family: var(--font-primary);
+    color: #111827; /* base text color */
+  }
+
+  /* H1 - Hero / Display */
+  h1 {
+    @apply text-white leading-tight text-[24px] sm:text-[28px] md:text-[36px] lg:text-[42px] xl:text-[48px] 2xl:text-[56px];
+  }
+
+  /* H2 - Section Header */
+  h2 {
+    @apply font-semibold leading-snug text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] xl:text-[36px] 2xl:text-[42px];
+  }
+
+  /* H3 - Product / Card Title */
+  h3 {
+    @apply font-medium leading-snug text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px] 2xl:text-[28px];
+  }
+
+  /* H4 - Subheading / Label */
+  h4 {
+    @apply font-medium leading-normal text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] xl:text-[22px] 2xl:text-[24px];
+  }
+
+  /* Paragraph / Body */
+  p {
+    @apply font-normal leading-relaxed text-[12px] sm:text-[14px] md:text-[16px] lg:text-[18px] xl:text-[20px] 2xl:text-[22px];
+  }
+
+  /* Small / Helper Text */
+  .text-small {
+    @apply font-normal leading-snug text-[11px] sm:text-[12px] md:text-[13px] lg:text-[14px] xl:text-[15px] 2xl:text-[16px];
+  }
+
+  /* Tiny / Metadata */
+  .text-tiny {
+    @apply font-medium leading-snug text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] xl:text-[14px] 2xl:text-[15px];
+  }
+
+  /* XS / Micro Tag Text */
+  .text-xs-custom {
+    @apply font-medium leading-snug text-[8px] sm:text-[9px] md:text-[10px] lg:text-[11px] xl:text-[12px] 2xl:text-[13px];
+  }
+}

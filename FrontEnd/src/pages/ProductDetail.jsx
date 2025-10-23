@@ -11,11 +11,13 @@ function ProductDetail() {
   const [sizeQuantities, setSizeQuantities] = useState({});
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [defaultQuantity, setDefaultQuantity] = useState(1);
-  const { id } = useParams();
+  const [adding, setAdding] = useState(false);
+
   const navigate = useNavigate();
+  const { id } = useParams();
   const dispatch = useDispatch();
   const product = useSelector((state) => state.product.product);
-  const  userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("userId");
 
   // Fetch product by ID
   const fetchProductById = async (id) => {
@@ -44,14 +46,12 @@ function ProductDetail() {
     if (id) fetchProductById(id);
   }, [id]);
 
-  // Toggle size selection but ignore clicks on input
+  // Toggle size selection
   const toggleSizeSelection = (size, e) => {
-    if (e.target.tagName === "INPUT") return; // prevent deselect on input click
-
+    if (e.target.tagName === "INPUT") return;
     setSelectedSizes((prev) =>
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
     );
-
     if (!sizeQuantities[size]) {
       setSizeQuantities((prev) => ({ ...prev, [size]: 1 }));
     }
@@ -70,18 +70,23 @@ function ProductDetail() {
 
   // Add to cart
   const addToCart = async () => {
-    if (!userId) return toast.error("You must be logged in to add to cart");
+    if (adding) return;
+    if (!userId) return navigate("/login");
 
+    setAdding(true);
     try {
       if (product.sizeOption?.length) {
-        if (!selectedSizes.length) return toast.error("Please select at least one size");
+        if (!selectedSizes.length)
+          return toast.error("Please select at least one size");
 
         for (let size of selectedSizes) {
           const option = product.sizeOption.find((opt) => opt.size === size);
           const qty = sizeQuantities[size] || 1;
 
           if (qty > option.stock) {
-            toast.error(`Cannot add more than available stock for size ${size} (${option.stock})`);
+            toast.error(
+              `Cannot add more than available stock for size ${size} (${option.stock})`
+            );
             return;
           }
 
@@ -93,15 +98,23 @@ function ProductDetail() {
 
           const response = await Axios.post("/api/cart/", { newItem, userId });
           const data = response.data;
+
           if (data.success) dispatch(setUserCart(data.userCart));
-          else toast.error(data.message || "Failed to add product(s) to cart");
+          else {
+            toast.error(data.message || "Failed to add product(s) to cart");
+            return navigate("/login");
+          }
         }
       } else {
-        const qty = defaultQuantity > product.quantity ? product.quantity : defaultQuantity;
-        const newItem = { product: product._id, quantity: qty, sizeOption: null };
+        const qty =
+          defaultQuantity > product.quantity
+            ? product.quantity
+            : defaultQuantity;
 
+        const newItem = { product: product._id, quantity: qty, sizeOption: null };
         const response = await Axios.post("/api/cart/", { newItem, userId });
         const data = response.data;
+
         if (data.success) dispatch(setUserCart(data.userCart));
         else toast.error(data.message || "Failed to add product(s) to cart");
       }
@@ -111,35 +124,43 @@ function ProductDetail() {
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong while adding to cart");
+    } finally {
+      setTimeout(() => {
+        setAdding(false);
+      }, 10000);
     }
   };
 
   if (isLoading)
     return (
-      <p className="text-gray-500 text-center mt-10 text-lg animate-pulse">
+      <p className="text-gray-500 text-center mt-10 text-base md:text-lg animate-pulse">
         Loading product details...
       </p>
     );
 
   if (!product)
     return (
-      <p className="text-gray-500 text-center mt-10 text-lg">No product found.</p>
+      <p className="text-gray-500 text-center mt-10 text-base md:text-lg">
+        No product found.
+      </p>
     );
 
   const mainImage = product.images?.[0];
   const otherImages = product.images?.slice(1) || [];
   const totalQuantity =
-    product.sizeOption?.reduce((sum, opt) => sum + (opt.stock || 0), 0) || product.quantity;
+    product.sizeOption?.reduce((sum, opt) => sum + (opt.stock || 0), 0) ||
+    product.quantity;
+
   return (
-    <div className="my-8 max-w-4xl mx-auto p-6 bg-white rounded-3xl shadow-xl flex flex-col gap-8 border-t border-gray-50">
-      <div className="flex flex-col md:flex-row gap-6">
+    <div className="my-8 max-w-4xl mx-auto p-[22px] md:p-[24px] lg:p-[26px] bg-gray-50 rounded-xl shadow-md flex flex-col gap-6 border-t border-gray-100">
+      <div className="flex flex-col md:flex-row gap-5 md:gap-6">
         {/* Images */}
-        <div className="flex-1 flex flex-col gap-4">
+        <div className="flex-1 flex flex-col gap-3 md:gap-4">
           {mainImage && (
             <img
               src={mainImage}
               alt={product.name}
-              className="w-full h-80 md:h-[360px] object-cover rounded-3xl shadow-lg transition-transform duration-300 hover:scale-105"
+              className="w-full h-80 md:h-[360px] object-cover rounded-lg shadow-md transition-transform duration-300 hover:scale-[1.03]"
             />
           )}
           {otherImages.length > 0 && (
@@ -149,40 +170,51 @@ function ProductDetail() {
                   key={index}
                   src={img}
                   alt={`${product.name} ${index + 2}`}
-                  className="w-20 h-20 md:w-full md:h-24 object-cover rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex-shrink-0"
+                  className="w-20 h-20 md:w-full md:h-24 object-cover rounded-md shadow-sm hover:shadow-md transition-shadow duration-300 flex-shrink-0"
                 />
               ))}
             </div>
           )}
         </div>
+
         {/* Product Info */}
-        <div className="flex-1 flex flex-col gap-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{product.name}</h1>
-          <h2 className="text-xl font-semibold text-indigo-600">
-            Price: <span className="text-gray-700">${product.price}</span>
+        <div className="flex-1 flex flex-col gap-3 md:gap-4">
+          {/* H1 */}
+          <h1 className="text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-bold text-black leading-tight">
+            {product.name}
+          </h1>
+
+          {/* H2 */}
+          <h2 className="text-[16px] sm:text-[18px] md:text-[20px] font-semibold text-gray-900">
+            Price: <span className="text-indigo-600">${product.price}</span>
           </h2>
+
           {/* Size Options */}
           {product.sizeOption?.length > 0 ? (
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold mb-3 text-gray-800">Available Sizes:</h3>
+            <div className="mt-3">
+              <h3 className="text-[14px] sm:text-[16px] md:text-[18px] font-medium mb-2 text-gray-800">
+                Available Sizes:
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {product.sizeOption.map((option) => (
                   <div
                     key={option.size}
-                    className={`p-4 rounded-2xl border ${
+                    className={`p-[16px] rounded-lg border ${
                       selectedSizes.includes(option.size)
                         ? "border-indigo-600 bg-indigo-50"
-                        : "border-gray-200 bg-gray-50"
+                        : "border-gray-200 bg-white"
                     } shadow-sm hover:shadow-md transition-all duration-300 flex flex-col gap-2 cursor-pointer`}
                     onClick={(e) => toggleSizeSelection(option.size, e)}
                   >
-                    <span className="font-semibold text-lg text-gray-900">
+                    <span className="text-[16px] font-semibold text-gray-900">
                       Size: {option.size}
                     </span>
-                    <span className="text-gray-600">
-                      Additional Price: +${option.additionalPrice || 0}
+                    <span className="text-[14px] text-gray-600">
+                      +${option.additionalPrice || 0} extra
                     </span>
-                    <span className="text-gray-700">Stock: {option.stock}</span>
+                    <span className="text-[14px] text-gray-700">
+                      Stock: {option.stock}
+                    </span>
                     {selectedSizes.includes(option.size) && (
                       <input
                         type="number"
@@ -190,9 +222,13 @@ function ProductDetail() {
                         max={option.stock}
                         value={sizeQuantities[option.size] ?? ""}
                         onChange={(e) =>
-                          updateQuantity(option.size, e.target.value === "" ? "" : Number(e.target.value), option.stock)
+                          updateQuantity(
+                            option.size,
+                            e.target.value === "" ? "" : Number(e.target.value),
+                            option.stock
+                          )
                         }
-                        className="mt-2 w-24 border rounded px-2 py-1"
+                        className="mt-2 w-24 border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                     )}
                   </div>
@@ -200,33 +236,44 @@ function ProductDetail() {
               </div>
             </div>
           ) : (
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold mb-3 text-gray-800">Quantity:</h3>
+            <div className="mt-3">
+              <h3 className="text-[14px] sm:text-[16px] md:text-[18px] font-medium mb-2 text-gray-800">
+                Quantity:
+              </h3>
               <input
                 type="number"
                 min={1}
                 max={product.quantity}
                 value={defaultQuantity}
                 onChange={(e) => setDefaultQuantity(Number(e.target.value))}
-                className="w-24 border rounded px-2 py-1"
+                className="w-24 border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           )}
-          <h3 className="text-lg font-semibold mt-4 text-gray-800">
-            Total Available: <span className="text-indigo-600 font-bold">{totalQuantity}</span>
+
+          {/* Stock Info */}
+          <h3 className="text-[14px] sm:text-[16px] md:text-[18px] font-medium mt-3 text-gray-800">
+            Total Available:{" "}
+            <span className="text-indigo-600 font-semibold">{totalQuantity}</span>
           </h3>
+
+          {/* Description */}
           {product.description && (
-            <p className="text-gray-600 mt-2 leading-relaxed">{product.description}</p>
+            <p className="text-[14px] md:text-[16px] text-gray-700 mt-2 leading-relaxed">
+              {product.description}
+            </p>
           )}
-          <div className="flex flex-wrap gap-4 mt-6">
+
+          {/* Buttons */}
+          <div className="flex flex-wrap gap-3 md:gap-4 mt-5">
             <button
-              className="bg-indigo-600 text-white px-6 py-2 rounded-2xl font-semibold hover:bg-indigo-700 transition-colors duration-300 shadow-md"
+              className="bg-indigo-600 text-white px-[18px] py-[8px] rounded-md font-semibold hover:bg-indigo-700 active:scale-95 disabled:opacity-70 transition-all duration-300 shadow-sm hover:shadow-md"
               onClick={addToCart}
             >
-             Add To Cart
+              Add To Cart
             </button>
             <button
-              className="border border-indigo-600 text-indigo-600 px-6 py-2 rounded-2xl font-semibold hover:bg-indigo-50 transition-colors duration-300 shadow-sm"
+              className="border border-indigo-600 text-indigo-600 px-[18px] py-[8px] rounded-md font-semibold hover:bg-indigo-50 active:scale-95 disabled:opacity-70 transition-all duration-300 shadow-sm hover:shadow-md"
               onClick={() => navigate(-1)}
             >
               Back To Shop
@@ -237,5 +284,4 @@ function ProductDetail() {
     </div>
   );
 }
-
 export default ProductDetail;

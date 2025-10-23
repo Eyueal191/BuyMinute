@@ -4,15 +4,14 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import connectDB from "./config/connectDB.js";
+import connectDB from "../config/connectDB.js";
+import {ensureAuthenticated} from "../middleware/auth.js";
 import {
     userRoutes, productRoutes,
     cartRoutes, orderRoutes
-} from "./routes/index.js";
+} from "../routes/index.js";
 dotenv.config();
-
 const app = express();
-
 app.use(
     cors({
         origin: true,
@@ -25,11 +24,10 @@ app.use(morgan("dev")); // used to log the request.
 app.use(helmet({
     crossOriginResourcePolicy: false
 })); // used to apply all security headers on the response.
-
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
-app.use("/api/cart", cartRoutes);
-app.use("/api/order", orderRoutes);
+app.use("/api/cart",ensureAuthenticated, cartRoutes);
+app.use("/api/order",ensureAuthenticated, orderRoutes);
 const PORT = process.env.PORT || 8080;
 connectDB().then(() => {
     app.listen(PORT, () => {

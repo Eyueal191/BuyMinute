@@ -19,14 +19,13 @@ function LogIn() {
     try {
       const response = await Axios.post("/api/user/login", payload);
       const data = response.data;
-// log user email;
-console.log("Email:", data.email);
       if (data.success) {
         toast.success(data.message || "Login successful!");
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("email", data.email);
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("loggedIn", true);
+        console.log("AccessToken:", data.accessToken)
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login failed.");
@@ -34,7 +33,7 @@ console.log("Email:", data.email);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 md:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 md:px-8 bg-gray-50">
       <div className="w-full max-w-md sm:max-w-md md:max-w-lg lg:max-w-xl 2xl:max-w-2xl bg-white p-6 sm:p-8 md:p-10 rounded-lg shadow-md">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-4">
           Log In

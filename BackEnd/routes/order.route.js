@@ -7,29 +7,19 @@ import {
   updateOrderItemById,
   updateUserOrderByUserId
 } from "../controllers/orderController.js";
-
+import { ensureAuthenticatedAdmin } from "../middleware/auth.js";
 const orderRoutes = express.Router();
-
-/**
- * Order Routes
- */
-
-// Admin: get all orders
-orderRoutes.get("/", getAllOrders);
-
-// User: place a new order
+// Order Routes.
+// Admin: get all orders.
+orderRoutes.get("/", ensureAuthenticatedAdmin, getAllOrders);
+// User: place a new orderItem.
 orderRoutes.post("/user/:userId", placeOrderByUserId);
-
-// User: get all orders by userId
+// User: get all orders by userId.
 orderRoutes.get("/user/:userId", getUserOrdersByUserId);
-
-// User: update entire order (e.g., payment info, addresses, etc.)
+// User: update entire orderItem (e.g., payment info, addresses, etc).
 orderRoutes.put("/user/:userId", updateUserOrderByUserId);
-
-// Order Item: update a specific order item by itemId
-orderRoutes.put("/item/:itemId", updateOrderItemById);
-
-// Order Item: delete a specific item from a user’s order
-orderRoutes.delete("/user/:userId/item/:itemId", deleteOrderItemByUserId);
-
+// Order Item: update a user orderItem by itemId.
+orderRoutes.put("/user/:userId/:itemId", updateOrderItemById);
+// Order Item: delete a specific item from a user’s order.
+orderRoutes.delete("/user/:userId/", deleteOrderItemByUserId);
 export default orderRoutes;

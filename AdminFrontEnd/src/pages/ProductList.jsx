@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setProductsList } from "../redux/productSlice.js";
 
 function ProductList() {
-  const products = useSelector((state) => state.products.productsList); // fixed
+  const products = useSelector((state) => state.products.productsList);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const parentRef = useRef();
@@ -17,11 +17,10 @@ function ProductList() {
   const rowVirtualizer = useVirtualizer({
     count: rowCounts,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 170,
+    estimateSize: () => 180,
     overscan: 3,
   });
 
-  // Fetch products from backend
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -29,7 +28,7 @@ function ProductList() {
       const data = response.data;
 
       if (data.success) {
-        dispatch(setProductsList(data.products)); // store in Redux
+        dispatch(setProductsList(data.products));
       } else {
         throw new Error(data.message || "Failed to fetch products");
       }
@@ -50,22 +49,23 @@ function ProductList() {
   }, []);
 
   return (
-    <div className="p-6 bg-white min-h-screen">
-      <h1 className="text-main-heading mb-6">Product List</h1>
+    <div className="p-6 min-h-screen bg-gray-50">
+      <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center sm:text-left">
+        Product List
+      </h1>
 
       {loading ? (
-        <p className="text-description text-gray-500">Loading products...</p>
+        <p className="text-gray-500 text-center py-4">Loading products...</p>
       ) : rowCounts === 0 ? (
-        <p className="text-description text-gray-500">No products found.</p>
+        <p className="text-gray-500 text-center py-4">No products found.</p>
       ) : (
         <div
           ref={parentRef}
-          className="relative overflow-auto w-full border border-gray-300 rounded-md mx-auto h-screen py-6 bg-gray-50"
+          className="relative overflow-auto w-full border border-gray-300 rounded-lg mx-auto h-[80vh] py-4 bg-white shadow-inner"
         >
           <div
-            className="flex flex-col gap-6"
+            className="flex flex-col gap-6 relative"
             style={{
-              position: "relative",
               height: `${rowVirtualizer.getTotalSize()}px`,
               width: "100%",
             }}
@@ -93,7 +93,7 @@ function ProductList() {
                     images={product.images}
                     price={product.price}
                     quantity={product.quantity}
-                    className="border-b border-gray-200"
+                    className="border-b border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all"
                   />
                 </div>
               );

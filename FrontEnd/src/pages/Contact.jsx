@@ -4,16 +4,16 @@ import contact from "../assets/contact.jpg";
 
 function Contact() {
   return (
-    <div className="w-full flex flex-col items-center bg-white pb-8">
+    <div className="w-full flex flex-col items-center bg-gray-50 pt-10 pb-20">
       {/* Section Title */}
-      <section className="py-8 text-center w-full">
-        <Title text1="CONTACT" text2="US" addSolidLineAfter={true} />
+      <section className="py-8 text-left w-full max-w-6xl mx-auto px-6">
+        <Title text1="Contact" text2="Us" addSolidLineAfter={true} />
       </section>
 
-      {/* Contact Info Section */}
-      <section className="flex flex-col sm:flex-row w-full max-w-6xl overflow-hidden shadow-lg bg-white">
+      {/* Main Content Section */}
+      <section className="flex flex-col md:flex-row w-full max-w-6xl overflow-hidden shadow-lg bg-white rounded-2xl">
         {/* Left: Image */}
-        <div className="w-full sm:w-1/2">
+        <div className="w-full md:w-1/2">
           <img
             src={contact}
             alt="Contact"
@@ -22,37 +22,42 @@ function Contact() {
         </div>
 
         {/* Right: Info */}
-        <div className="w-full sm:w-1/2 flex flex-col justify-center bg-white px-6 sm:px-12">
+        <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-6 sm:px-12 py-12 space-y-12">
           {/* Store Info */}
-          <div className="py-12 space-y-2 text-justify w-full">
+          <div className="space-y-3 w-full">
             <Title text1="Our" text2="Store" addSolidLineAfter={true} />
-            <h2 className="text-gray-700 text-sm md:text-base font-medium">
+            <p className="text-gray-700 text-sm sm:text-base font-medium">
               Addis Abeba 22
-            </h2>
-            <h2 className="text-gray-700 text-sm md:text-base font-medium">
+            </p>
+            <p className="text-gray-700 text-sm sm:text-base font-medium">
               Golagol Building
-            </h2>
-            <h2 className="text-gray-700 text-sm md:text-base font-medium">
+            </p>
+            <p className="text-gray-700 text-sm sm:text-base font-medium">
               Tel: 0909040610
-            </h2>
-            <h2 className="text-gray-700 text-sm md:text-base font-medium">
+            </p>
+            <p className="text-gray-700 text-sm sm:text-base font-medium">
               Email: eyuealayalew191@gmail.com
-            </h2>
+            </p>
           </div>
 
           {/* Careers Info */}
-          <div className="py-12 space-y-2 text-justify w-full">
-            <Title text1="Careers at" text2="Buy Minute" addSolidLineAfter={true} />
-            <h1 className="text-black text-2xl md:text-3xl font-bold">
+          <div className="space-y-3 w-full">
+            <Title
+              text1="Careers at"
+              text2={<span className="text-blue-500">Buy Minute</span>}
+              addSolidLineAfter={true}
+            />
+            <h1 className="text-gray-900 text-xl sm:text-2xl lg:text-3xl font-bold">
               Join Our Team
             </h1>
-            <h2 className="text-gray-700 text-sm md:text-base font-medium">
+            <p className="text-gray-700 text-sm sm:text-base font-medium">
               We’re always looking for passionate individuals to join our team.
-            </h2>
+            </p>
           </div>
         </div>
       </section>
     </div>
   );
 }
+
 export default Contact;

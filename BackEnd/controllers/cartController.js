@@ -2,8 +2,6 @@ import _ from "lodash";
 import Cart from "../models/Cart.js"; // your Cart model
 // 1. addToCart.
  const addToCart = async (req, res) => {
-  console.log("Incoming data:", req.body);
-
   try {
     const { newItem, userId } = req.body;
 
@@ -27,7 +25,6 @@ import Cart from "../models/Cart.js"; // your Cart model
         // Add as new item
         userCart.items.push(newItem);
       }
-
       await userCart.save();
     } else {
       // Create new cart if not exist

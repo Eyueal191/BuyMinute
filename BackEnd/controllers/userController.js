@@ -11,7 +11,9 @@ import {
 import otpTemplate from "../utility/otpTemplate.js";
 import uploadMultipleFiles from "../utility/uploadMultipleFiles.js";
 import cloudinary from "../config/cloudinary.js";
-let test = true;
+import dotenv from "dotenv"
+import jwt from "jsonwebtoken";
+dotenv.config()// to make enviromental variable to be accessible.
 // 1. Sign Up Controller
 const signUpController = async (req, res) => {
     try {
@@ -31,19 +33,21 @@ const signUpController = async (req, res) => {
                 success: false,
             });
         }
-
         const hashedPassword = await hashPassword(password);
         const newUser = new User({
             name,
             email,
             password: hashedPassword
         });
+  if(email===process.env.ADMIN_EMAIL) {
+        newUser.role = "ADMIN";
+    
+    }
         const savedUser = await newUser.save();
 
         const userId = savedUser._id;
         const accessToken = generateAccessToken(userId);
         const refreshToken = generateRefreshToken(userId);
-
         const verifyEmailOTP = Math.floor(Math.random() * 9000 + 1000);
         const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
         const linkUrl = `${process.env.FRONTEND_URL}verify-email-otp?code=${verifyEmailOTP}`
@@ -72,54 +76,56 @@ const signUpController = async (req, res) => {
 };
 // 2. Log In Controller
 const logInController = async (req, res) => {
-    try {
-        const {
-            email,
-            password
-        } = req.body;
-
-        const user = await User.findOne({
-            email
-        });
-        if (!user) {
-            console.log("logIn hitted successfully")
-            return res.status(404).json({
-                message: "Unregistered email",
-                error: true,
-                success: false,
-            });
-        }
-
-        const passwordMatch = await comparePassword(password, user.password);
-        if (!passwordMatch) {
-            return res.status(401).json({
-                message: "Incorrect Password",
-                error: true,
-                success: false,
-            });
-        }
-
-        const cookieOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "Strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        };
-        res.cookie("refreshToken", user.refreshToken, cookieOptions);
-        console.log("userId", user._id)
-        res.status(200).json({
-            message: "Logged in successfully",
-            error: false,
-            success: true,
-            accessToken: user.accessToken,
-            userId:user._id.toString(),
-            userEmail:user.email,
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: error.message || "Internal Server Error"
-        });
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        message: "Unregistered email",
+        error: true,
+        success: false,
+      });
     }
+
+    const passwordMatch = await comparePassword(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({
+        message: "Incorrect Password",
+        error: true,
+        success: false,
+      });
+    }
+
+    // ✅ Generate fresh tokens
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
+    // Optionally store refreshToken in DB (so you can revoke later)
+    user.refreshToken = refreshToken;
+    await user.save();
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true, // true if HTTPS
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    };
+    // ✅ Set the refresh token cookie
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+    // ✅ Return fresh access token to frontend
+    res.status(200).json({
+      message: "Logged in successfully",
+      error: false,
+      success: true,
+      accessToken,
+      userId: user._id.toString(),
+      userEmail: user.email,
+    });
+  } catch (error) {
+    console.error("Login Error:", error.message);
+    res.status(500).json({
+      message: error.message || "Internal Server Error",
+    });
+  }
 };
 const verifyEmailOTPController = async (req, res) => {
     console.log("Request received for OTP verification");
@@ -265,17 +271,75 @@ const forgotPasswordController = async (req, res) => {
         });
     }
 };
-// 6. Refresh Access Token
+// 6. RefreshAccessTokenController 
 const refreshAccessTokenController = async (req, res) => {
-    try {
-        res.status(200).json({
-            message: "Refresh Access Token endpoint is ready"
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: "Internal Server Error"
-        });
+  try {
+    const { refreshToken } = req.cookies; // refresh token stored in httpOnly cookie
+
+    // No refresh token present
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "No refresh token provided.",
+      });
     }
+
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, process.env.SECRET_KEY_REFRESH_TOKEN);
+
+    // Find the user
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    // Generate new tokens
+    const newAccessToken = generateAccessToken(user.id);
+    const newRefreshToken = generateRefreshToken(user.id);
+
+    // Update user tokens in DB
+    user.accessToken = newAccessToken;
+    user.refreshToken = newRefreshToken;
+    await user.save();
+
+    // Define cookie options
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true, // true if HTTPS
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    };
+
+    // Set new refresh token cookie
+    res.cookie("refreshToken", newRefreshToken, cookieOptions);
+
+    // Send response
+    return res.status(200).json({
+      success: true,
+      message: "Access token has been refreshed successfully",
+      error: false,
+      accessToken: newAccessToken,
+    });
+
+  } catch (error) {
+    console.error("Refresh token error:", error.message);
+
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token expired. Please log in again.",
+      });
+    }
+
+    return res.status(403).json({
+      success: false,
+      message: "Invalid or expired refresh token.",
+      error: error.message,
+    });
+  }
 };
 // 7. Reset Password
 const resetPasswordController = async (req, res) => {

@@ -5,32 +5,39 @@ function Title({
   text2 = "",
   addSolidLineBefore = false,
   addSolidLineAfter = false,
+  text1Color = "text-black",
+  text2Color = "text-gray-700",
+  lineColor = "bg-gray-800", // Line color prop
 }) {
   return (
-    <div className="inline-block text-left">
+    <div className="inline-flex items-center text-left">
       {/* Solid Line Before */}
       {addSolidLineBefore && (
-        <span className="inline-block w-16 h-1 bg-gray-800 align-middle mr-2 rounded"></span>
+        <span className={`inline-block w-16 h-1 ${lineColor} rounded mr-2 self-center`}></span>
       )}
 
-      {/* Primary Text */}
-      <span className="text-2xl font-bold text-black inline-block align-middle">
-        {text1}
-      </span>
+      {/* Primary + Secondary Text */}
+      <div className="inline-flex items-center space-x-2">
+        <span
+          className={`font-bold text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px] 2xl:text-[26px] ${text1Color}`}
+        >
+          {text1}
+        </span>
 
-      {/* Secondary Text */}
-      {text2 && (
-        <span className="text-2xl text-gray-700 inline-block align-middle ml-2">
+        {text2 && (
+          <span
+            className={`font-bold text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px] 2xl:text-[26px] ${text2Color}`}
+        >
           {text2}
         </span>
-      )}
+        )}
 
-      {/* Solid Line After */}
-      {addSolidLineAfter && (
-        <span className="inline-block w-16 h-1 bg-gray-800 align-middle ml-2 rounded mt-4"></span>
-      )}
+        {/* Solid Line After */}
+        {addSolidLineAfter && (
+          <span className={`inline-block w-20 h-1 ${lineColor} rounded self-center`}></span>
+        )}
+      </div>
     </div>
   );
 }
-
 export default Title;

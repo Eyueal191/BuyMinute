@@ -130,7 +130,7 @@ function PlaceOrder() {
   );
 
   return (
-    <div className="w-full flex flex-col sm:flex-row gap-6 p-6 lg:p-20">
+    <div className="w-full flex flex-col sm:flex-row gap-6 p-6 lg:p-20 bg-gray-50">
       {clientSecret ? (
         <div className="w-full sm:w-1/2 flex flex-col gap-4 border border-gray-300 p-6 rounded-lg">
           <Elements stripe={stripePromise} options={{ clientSecret }}>

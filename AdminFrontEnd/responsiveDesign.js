@@ -27,7 +27,6 @@ Light Gray (#9CA3AF) → placeholders, hints Sm:
 2. Subheading ---> title, badge, notification, secondary buttons like viewdetails, update etc. --> font Size --> 22px and bold. 
 3. labels ---> 22px and medium
 4. descriptions ---> font Size 20px regular lg
-
 1. Main Heading --> example button text font Size --> 28px and bold.
 2. Subheading ---> title, badge, notification, secondary buttons like viewdetails, update etc. --> font Size --> 26px and bold. 
 3. labels ---> 26px and medium
@@ -37,4 +36,5 @@ Light Gray (#9CA3AF) → placeholders, hints Sm:
 2. Subheading ---> title, badge, notification, secondary buttons like viewdetails, update etc. --> font Size --> 30px and bold. 
 3. labels ---> 30px and medium
 4. descriptions ---> font Size 28px regular
+So what I have managed to understand is how I can work with tailwindcss with ease and all my energy.
 */

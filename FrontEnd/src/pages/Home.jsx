@@ -8,6 +8,7 @@ import { FaGreaterThan, FaLessThan } from "react-icons/fa";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import { BiSupport } from "react-icons/bi";
 import { SiContactlesspayment } from "react-icons/si";
+import Loading from "../components/Loading.jsx";
 
 function Home() {
   const [loading, setLoading] = useState(false);
@@ -61,8 +62,51 @@ function Home() {
     fetchProductsList();
   }, []);
 
+  const renderCategory = (products, page, setPage, title) => (
+    <div className="flex flex-col items-center">
+      <h2 className="text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] font-semibold border border-gray-300 rounded-md px-6 py-2 mb-6 min-w-[20vw] text-center">
+        <Title text1={title} />
+      </h2>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => setPage(prev => Math.max(prev - 1, 0))}
+          disabled={page <= 0 || loading}
+          className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <FaLessThan size={48} />
+        </button>
+
+        {loading
+          ? Array.from({ length: columns }).map((_, idx) => (
+              <div key={idx} className="h-[300px] w-[200px] bg-gray-200 animate-pulse rounded-lg"></div>
+            ))
+          : Array.from({ length: columns }).map((_, idx) => {
+              const product = products[page + idx];
+              return product ? <ProductCard key={product._id} product={product} /> : null;
+            })}
+
+        <button
+          onClick={() => setPage(prev => Math.min(prev + 1, products.length - columns))}
+          disabled={page >= products.length - columns || loading}
+          className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <FaGreaterThan size={48} />
+        </button>
+      </div>
+    </div>
+  );
+
+  if (loading && electronics.length === 0 && homeAndKitchen.length === 0 && clothing.length === 0) {
+    // show full-page loader if initial fetch
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <Loading />
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-auto bg-white">
+    <div className="w-full h-auto bg-gray-50 pb-30">
       {/* Hero Section */}
       <section className="flex flex-col sm:flex-row max-w-6xl mx-auto px-4 py-8 gap-0">
         <div className="flex-1">
@@ -79,122 +123,62 @@ function Home() {
             <Title text1="PRODUCTS" addSolidLineAfter />
           </div>
           <div className="mt-6">
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition duration-300">
+            <button className="bg-blue-500 font-bold text-white text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px] 2xl:text-[26px] px-6 py-3 rounded-md hover:bg-blue-700 transition duration-300">
               SHOP NOW
             </button>
           </div>
         </div>
       </section>
+
       {/* Products by Category */}
       <section className="mt-12 max-w-7xl mx-auto px-4 space-y-12">
-        {/* Electronics */}
-        <div className="flex flex-col items-center">
-          <h2 className="text-2xl font-semibold border border-gray-300 rounded-md px-6 py-2 mb-6 min-w-[20vw] text-center">
-            <Title text1="Electronics" />
-          </h2>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setElePage(prev => Math.max(prev - 1, 0))}
-              disabled={elePage <= 0}
-              className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FaLessThan size={48} />
-            </button>
-            {columns >= 1 && electronics[elePage] && <ProductCard product={electronics[elePage]} />}
-            {columns >= 2 && electronics[elePage + 1] && <ProductCard product={electronics[elePage + 1]} />}
-            {columns >= 3 && electronics[elePage + 2] && <ProductCard product={electronics[elePage + 2]} />}
-            {columns >= 4 && electronics[elePage + 3] && <ProductCard product={electronics[elePage + 3]} />}
-            <button
-              onClick={() => setElePage(prev => Math.min(prev + 1, electronics.length - columns))}
-              disabled={elePage >= electronics.length - columns}
-              className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FaGreaterThan size={48} />
-            </button>
-          </div>
-        </div>
-        {/* Home & Kitchen */}
-        <div className="flex flex-col items-center">
-          <h2 className="text-2xl font-semibold border border-gray-300 rounded-md px-6 py-2 mb-6 text-center">
-            <Title text1="Home & Kitchen" />
-          </h2>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setHomPage(prev => Math.max(prev - 1, 0))}
-              disabled={homPage <= 0}
-              className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FaLessThan size={48} />
-            </button>
-            {columns >= 1 && homeAndKitchen[homPage] && <ProductCard product={homeAndKitchen[homPage]} />}
-            {columns >= 2 && homeAndKitchen[homPage + 1] && <ProductCard product={homeAndKitchen[homPage + 1]} />}
-            {columns >= 3 && homeAndKitchen[homPage + 2] && <ProductCard product={homeAndKitchen[homPage + 2]} />}
-            {columns >= 4 && homeAndKitchen[homPage + 3] && <ProductCard product={homeAndKitchen[homPage + 3]} />}
-            <button
-              onClick={() => setHomPage(prev => Math.min(prev + 1, homeAndKitchen.length - columns))}
-              disabled={homPage >= homeAndKitchen.length - columns}
-              className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FaGreaterThan size={48} />
-            </button>
-          </div>
-        </div>
-        {/* Clothing */}
-        <div className="flex flex-col items-center">
-          <h2 className="text-2xl font-semibold border border-gray-300 rounded-md px-6 py-2 mb-6 text-center">
-            <Title text1="Clothing" />
-          </h2>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setCloPage(prev => Math.max(prev - 1, 0))}
-              disabled={cloPage <= 0}
-              className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FaLessThan size={48} />
-            </button>
-            {columns >= 1 && clothing[cloPage] && <ProductCard product={clothing[cloPage]} />}
-            {columns >= 2 && clothing[cloPage + 1] && <ProductCard product={clothing[cloPage + 1]} />}
-            {columns >= 3 && clothing[cloPage + 2] && <ProductCard product={clothing[cloPage + 2]} />}
-            {columns >= 4 && clothing[cloPage + 3] && <ProductCard product={clothing[cloPage + 3]} />}
-            <button
-              onClick={() => setCloPage(prev => Math.min(prev + 1, clothing.length - columns))}
-              disabled={cloPage >= clothing.length - columns}
-              className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FaGreaterThan size={48} />
-            </button>
-          </div>
-        </div>
+        {renderCategory(electronics, elePage, setElePage, "Electronics")}
+        {renderCategory(homeAndKitchen, homPage, setHomPage, "Home and Kitchen")}
+        {renderCategory(clothing, cloPage, setCloPage, "Clothings")}
       </section>
+
       {/* Policy Section */}
-      <section className="mt-12 bg-white py-12">
-        <div className="text-center py-4 mb-4"><Title text1="Our" text2="Policy" addSolidLineAfter={true} /></div>
-        <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="text-4xl text-green-500">
+      <section className="mt-12 py-12 flex flex-col align-strech border border-gray-50 w-[70vw] mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 xxl:px-12 py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12 xxl:py-14">
+        <div className="max-w-full ml-[1vw] mb-8 text-lef text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px]">
+          <Title text1="Our" text2="Policy" addSolidLineAfter={true} />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8 w-full">
+          <div className="flex flex-col border border-gray-300 text-center px-4 py-6">
+            <div className="text-5xl text-green-500">
               <LiaShippingFastSolid />
             </div>
-            <h4 className="text-xl font-semibold">Free Shipping</h4>
-            <p className="text-gray-500">On orders over $50</p>
+            <h4 className="text-left text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] xl:text-[22px] 2xl:text-[24px] font-semibold text-gray-800">
+              Free Shipping
+            </h4>
+            <p className="text-left text-[12px] sm:text-[14px] md:text-[15px] lg:text-[16px] xl:text-[17px] 2xl:text-[18px] text-gray-600">
+              On orders over $50
+            </p>
           </div>
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="text-4xl text-blue-500">
+          <div className="flex flex-col text-center border border-gray-300 px-4 py-6">
+            <div className="text-5xl text-blue-500">
               <BiSupport />
             </div>
-            <h4 className="text-xl font-semibold">24/7 Support</h4>
-            <p className="text-gray-500">We're here to help anytime</p>
+            <h4 className="text-left text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] xl:text-[22px] 2xl:text-[24px] font-semibold text-gray-800">
+              24/7 Support
+            </h4>
+            <p className="text-left text-[12px] sm:text-[14px] md:text-[15px] lg:text-[16px] xl:text-[17px] 2xl:text-[18px] text-gray-600">
+              We're here to help anytime
+            </p>
           </div>
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="text-4xl text-yellow-400">
+          <div className="flex flex-col text-center border border-gray-200 px-4 py-6">
+            <div className="text-5xl text-yellow-400">
               <SiContactlesspayment />
             </div>
-            <h4 className="text-xl font-semibold">Secure Payments</h4>
-            <p className="text-gray-500">100% safe & secure</p>
+            <h4 className="text-left text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] xl:text-[22px] 2xl:text-[24px] font-semibold text-gray-800">
+              Secure Payments
+            </h4>
+            <p className="text-left text-[12px] sm:text-[14px] md:text-[15px] lg:text-[16px] xl:text-[17px] 2xl:text-[18px] text-gray-600">
+              100% safe & secure
+            </p>
           </div>
         </div>
       </section>
     </div>
   );
 }
-
 export default Home;

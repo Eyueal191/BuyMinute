@@ -11,25 +11,28 @@ function VerifyPasswordResetOTP() {
   const [loading, setLoading] = useState(false);
   const formRef = useRef();
   const navigate = useNavigate();
+
   // Pre-fill OTP if code is present in query
   useEffect(() => {
     const code = searchParams.get("code");
     if (code) setOtp(code);
   }, [searchParams]);
+
   const changeHandler = (e) => setOtp(e.target.value);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
+
     try {
       setLoading(true);
       const payload = { email, otp };
       const { data } = await Axios.post("/api/user/verify-password-otp", payload);
       if (data.success) {
         formRef.current.reset();
+        setOtp("");
         toast.success(data.message);
-         setTimeout(()=>{
-      navigate("/password-reset")
-     },2000)
+        setTimeout(() => navigate("/password-reset"), 2000);
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "OTP verification failed");
@@ -37,13 +40,16 @@ function VerifyPasswordResetOTP() {
       setLoading(false);
     }
   };
+
   const resendHandler = async () => {
     if (loading) return;
+
     try {
       setLoading(true);
       const { data } = await Axios.post("/api/user/resend-password-otp", { email });
       if (data.success) {
         formRef.current.reset();
+        setOtp("");
         toast.success(data.message);
       }
     } catch (error) {
@@ -52,6 +58,7 @@ function VerifyPasswordResetOTP() {
       setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-50 px-4 sm:px-6">
       <Form
@@ -66,6 +73,7 @@ function VerifyPasswordResetOTP() {
         <p className="text-sm sm:text-base text-gray-500 text-center">
           Enter the OTP sent to <span className="font-medium">{email}</span>
         </p>
+
         <input
           type="text"
           name="otp"
@@ -81,7 +89,7 @@ function VerifyPasswordResetOTP() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white font-semibold py-3 sm:py-4 rounded-xl shadow-lg hover:bg-indigo-700 transition-all transform hover:scale-105 disabled:opacity-50"
+            className="w-full bg-indigo-600 text-white font-semibold py-3 sm:py-4 rounded-xl shadow-lg hover:bg-indigo-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Submit OTP
           </button>
@@ -90,7 +98,7 @@ function VerifyPasswordResetOTP() {
             type="button"
             onClick={resendHandler}
             disabled={loading}
-            className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 sm:py-4 rounded-xl shadow-sm transition-all disabled:opacity-50"
+            className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 sm:py-4 rounded-xl shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Resend OTP
           </button>

@@ -51,7 +51,7 @@ function VerifyPasswordResetOTP() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 bg-gray-50">
       <Form
         method="post"
         className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg space-y-6"

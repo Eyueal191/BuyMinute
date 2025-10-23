@@ -1,15 +1,18 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Axios from "../axios/axios.config.js";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setUserCart } from "../redux/cartSlice.js";
+
 function CartItemCard({ item, setRefetchCart }) {
   const dispatch = useDispatch();
-  const userId = localStorage.getItem("userId")
+  const userId = localStorage.getItem("userId");
   const [imgLoaded, setImgLoaded] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
   if (!item || !item.product) return null; // safety check
+
   const removeHandler = async () => {
     try {
       setIsDeleting(true);
@@ -17,16 +20,15 @@ function CartItemCard({ item, setRefetchCart }) {
         data: item,
       });
       const data = response.data;
-        console.log(data.message)
+
       if (data.success && data.userCart) {
-        // Update Redux with a new array reference to trigger re-render
-        setRefetchCart((prev)=>!prev)
+        setRefetchCart((prev) => !prev);
         dispatch(
           setUserCart({
             ...data.userCart,
             items: [...data.userCart.items],
           })
-        )
+        );
         toast.success("Item removed from cart");
       } else {
         toast.error("Failed to update cart");
@@ -38,14 +40,16 @@ function CartItemCard({ item, setRefetchCart }) {
       setIsDeleting(false);
     }
   };
+
   return (
     <div
-      className={`w-full flex items-center gap-6 p-4 border rounded-xl shadow-sm transition-all duration-300 bg-white hover:bg-gray-50 ${
-        isDeleting ? "opacity-50" : ""
-      }`}
+      className={`w-full flex flex-wrap sm:flex-nowrap items-center gap-6 p-5 border border-gray-200 rounded-2xl shadow-md bg-white
+        hover:bg-gray-50 hover:shadow-lg transition-all duration-300 ${
+          isDeleting ? "opacity-50 pointer-events-none" : ""
+        }`}
     >
       {/* Product Image */}
-      <figure className="w-28 h-28 flex-shrink-0 relative rounded-xl overflow-hidden">
+      <figure className="w-32 h-32 flex-shrink-0 relative rounded-xl overflow-hidden border border-gray-100 shadow-sm">
         {!imgLoaded && (
           <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-xl" />
         )}
@@ -54,33 +58,40 @@ function CartItemCard({ item, setRefetchCart }) {
           alt={item.product.name || "Product Image"}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
-          className={`w-full h-full object-cover transition-opacity duration-500 ${
+          className={`w-full h-full object-cover rounded-xl transition-opacity duration-500 ${
             imgLoaded ? "opacity-100" : "opacity-0"
           }`}
         />
       </figure>
-  {/* Product Details */}
-      <div className="flex-1 flex flex-col justify-center gap-1">
-        <h1 className="text-lg text-gray-900 font-bold">
+
+      {/* Product Details */}
+      <div className="flex-1 flex flex-col justify-center gap-2 min-w-[180px]">
+        <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">
           {item.product.name || "Unknown Product"}
         </h1>
-        <h2 className="text-gray-800 font-semibold">
-          Price: <span className="text-indigo-600">${item.product.price || 0}</span>
+        <h2 className="text-sm sm:text-base font-semibold text-gray-700">
+          Price:{" "}
+          <span className="text-indigo-600 font-bold">
+            ${item.product.price?.toFixed(2) || "0.00"}
+          </span>
         </h2>
-        <h3 className="text-gray-800 font-semibold">
-          Quantity: <span className="text-indigo-600">{item.quantity || 0}</span>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-700">
+          Quantity:{" "}
+          <span className="text-indigo-600 font-bold">{item.quantity || 0}</span>
         </h3>
       </div>
+
       {/* Delete Button */}
       <button
-        className="flex items-center gap-2 text-red-600 hover:text-red-800 font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex items-center gap-2 text-red-600 border border-red-600 rounded-lg px-5 py-2 hover:text-red-800 hover:bg-red-50 ring-1 ring-red-400 font-semibold transition-all duration-200 sm:ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={removeHandler}
         disabled={isDeleting}
       >
-        <RiDeleteBin6Line size={24} />
+        <RiDeleteBin6Line size={22} />
         <span>Remove</span>
       </button>
     </div>
   );
 }
+
 export default CartItemCard;

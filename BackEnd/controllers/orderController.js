@@ -50,8 +50,10 @@ const placeOrderByUserId = async (req, res) => {
 const getUserOrdersByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
+    console.log("userId", userId);
     let userOrders = await Order.findOne({ user: userId })
       .populate("items.product").lean();
+      console.log("userId:", userOrders);
     if (!userOrders || userOrders.length === 0) {
       return res.status(404).json({
         success: false,
@@ -109,12 +111,17 @@ const deleteOrderItemByUserId = async (req, res) => {
     const { userId } = req.params;
     const { cancelItem } = req.body;
 
-    if (!cancelItem) {
+console.log("userId:", userId);
+console.log("req.body:", req.body);
+console.log("cancelItem:", cancelItem);
+
+    if (!cancelItem?._id) {
       return res
         .status(400)
-        .json({ success: false, message: "cancelItem is required" });
+        .json({ success: false, message: "cancelItem._id is required" });
     }
 
+// Find the order
     const userOrder = await Order.findOne({ user: userId });
     if (!userOrder) {
       return res
@@ -122,16 +129,20 @@ const deleteOrderItemByUserId = async (req, res) => {
         .json({ success: false, message: "User order not found" });
     }
 
-  const itemsCount = userOrder.items.length;
-   const index = userOrder.items.findIndex((item)=> _.isEqual(cancelItem, item));
-   userOrder.items.splice(index, 1);
-    await userOrder.save();
+    // Remove the item by _id
+    const itemsCount = userOrder.items.length;
+    userOrder.items = userOrder.items.filter(
+      (item) => item._id.toString() !== cancelItem._id
+    );
+
     if (itemsCount === userOrder.items.length) {
       return res.status(400).json({
         success: false,
         message: "Order could not be cancelled (no matching item found)",
       });
     }
+
+    await userOrder.save();
 
     return res.status(200).json({
       success: true,
@@ -144,6 +155,7 @@ const deleteOrderItemByUserId = async (req, res) => {
     });
   }
 };
+
 // 5. Update order by ID.
 const updateOrderItemById = async (req, res) => {
   try {

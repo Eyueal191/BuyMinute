@@ -45,6 +45,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "", // optional
     },
+ phone:{type:String,
+    default:""
+ },
     orders: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Orders", // reference to Orders collection

@@ -1,118 +1,98 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
+import { FaFacebookSquare, FaInstagramSquare, FaTelegramPlane } from "react-icons/fa";
+import { MdEmail, MdPhone } from "react-icons/md";
 
 function Footer() {
-  const navLinkClass = ({ isActive }) =>
-    isActive
-      ? "py-1 px-2 text-blue-600 font-semibold"
-      : "py-1 px-2 text-gray-500 hover:text-blue-600 transition-colors duration-300";
+  const location = useLocation();
+  const isRouteActive = (path) => location.pathname === path;
+
+  const linkClasses = (path) =>
+    `inline-flex items-center justify-center transition-all duration-300 rounded-full px-4 py-2 ${
+      isRouteActive(path)
+        ? "bg-white text-blue-600 font-semibold shadow-md"
+        : "text-white hover:bg-white hover:text-blue-600 hover:shadow-md"
+    }`;
+
+  const contactLinkClasses =
+    "inline-flex items-center gap-2 text-white transition-all duration-300 rounded-full px-4 py-2 hover:bg-white hover:text-blue-600 hover:shadow-md";
 
   return (
-    <footer className="bg-gray-100 border-t border-gray-200 w-full py-10 px-6">
-      {/* Top Footer */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        
+    <footer className="bg-gradient-to-t from-gray-800 to-gray-900 w-full py-12 px-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 items-start">
+
         {/* Brand Section */}
-        <section className="flex flex-col gap-2 items-center sm:items-start">
-          <figure className="flex flex-col items-center gap-2 cursor-pointer">
+        <section className="flex flex-col items-start space-y-4">
+          <figure
+            className="flex flex-col items-start cursor-pointer group"
+            onClick={() => window.scrollTo(0, 0)}
+          >
             <img
               src={logo}
               alt="Buy Minute Logo"
-              className="w-12 rounded-xl h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 object-contain transition-transform duration-300 hover:scale-105"
+              className="w-32 h-28 object-contain rounded-lg transition-transform duration-300 hover:scale-105 shadow-md"
             />
-            <figcaption className="text-gray-900 font-bold text-lg md:text-xl lg:text-2xl text-center">
-              Buy Minute
+            <figcaption className="flex mt-2 items-center gap-3">
+              <span className="font-bold text-2xl text-white">
+                Buy <span className="text-white/70">Minute</span>
+              </span>
+              <span className="block w-20 h-1 bg-white/50 rounded-full"></span>
             </figcaption>
           </figure>
-          <p className="text-gray-500 text-sm text-center sm:text-left mt-2">
-            Your one-stop shop for quality products at the best prices.
+
+          <p className="text-white/90 text-sm leading-relaxed">
+            Your one-stop shop for quality products at unbeatable prices.
           </p>
         </section>
 
         {/* Quick Links */}
-        <section className="flex flex-col gap-2">
-          <h2 className="text-gray-900 font-semibold text-lg mb-2">Quick Links</h2>
-          <NavLink className={navLinkClass} to="/home" aria-label="Home">
-            Home
-          </NavLink>
-          <NavLink className={navLinkClass} to="/shop" aria-label="Shop">
-            Shop
-          </NavLink>
-          <NavLink className={navLinkClass} to="/about" aria-label="About">
-            About
-          </NavLink>
-          <NavLink className={navLinkClass} to="/contact" aria-label="Contact">
-            Contact
-          </NavLink>
+        <section className="flex flex-col space-y-3">
+          <h2 className="text-white font-semibold text-xl mb-2">Quick Links</h2>
+          <NavLink to="/" className={linkClasses("/")}>Home</NavLink>
+          <NavLink to="/shop" className={linkClasses("/shop")}>Shop</NavLink>
+          <NavLink to="/about" className={linkClasses("/about")}>About</NavLink>
+          <NavLink to="/contact" className={linkClasses("/contact")}>Contact</NavLink>
         </section>
 
         {/* Customer Links */}
-        <section className="flex flex-col gap-2">
-          <h2 className="text-gray-900 font-semibold text-lg mb-2">Customer Links</h2>
-          <NavLink className={navLinkClass} to="/account" aria-label="Account">
-            Account
-          </NavLink>
-          <NavLink className={navLinkClass} to="/orders" aria-label="Orders">
-            Orders
-          </NavLink>
-          <NavLink className={navLinkClass} to="/cart" aria-label="Cart">
-            Cart
-          </NavLink>
-          <NavLink className={navLinkClass} to="/login" aria-label="Login">
-            Login
-          </NavLink>
+        <section className="flex flex-col space-y-3">
+          <h2 className="text-white font-semibold text-xl mb-2">Customer Links</h2>
+          <NavLink to="/account" className={linkClasses("/account")}>Account</NavLink>
+          <NavLink to="/orders" className={linkClasses("/orders")}>Orders</NavLink>
+          <NavLink to="/cart" className={linkClasses("/cart")}>Cart</NavLink>
+          <NavLink to="/login" className={linkClasses("/login")}>Login</NavLink>
         </section>
 
         {/* Contact Section */}
-        <section className="flex flex-col gap-2">
-          <h2 className="text-gray-900 font-semibold text-lg mb-2">Contact</h2>
-          <a
-            href="mailto:support@buyminstore.com"
-            className="text-gray-500 hover:text-blue-600 transition-colors duration-300"
-            aria-label="Email Support"
-          >
-            📧 support@buyminstore.com
+        <section className="flex flex-col space-y-3">
+          <h2 className="text-white font-semibold text-xl mb-2">Contact</h2>
+          <a href="mailto:support@buyminstore.com" className={contactLinkClasses}>
+            <MdEmail className="text-lg" /> support@buyminstore.com
           </a>
-          <a
-            href="tel:+251909040610"
-            className="text-gray-500 hover:text-blue-600 transition-colors duration-300"
-            aria-label="Call Support"
-          >
-            📞 0909040610
+          <a href="tel:+251909040610" className={contactLinkClasses}>
+            <MdPhone className="text-lg" /> 0909040610
           </a>
-          <div className="flex gap-4 mt-2">
-            <a
-              href="#"
-              className="text-gray-500 hover:text-blue-600 transition-colors duration-300"
-              aria-label="Telegram"
-            >
-              Telegram
+
+          <div className="flex flex-wrap gap-4 pt-2">
+            <a href="#" className={contactLinkClasses}>
+              <FaTelegramPlane className="text-lg" /> Telegram
             </a>
-            <a
-              href="#"
-              className="text-gray-500 hover:text-blue-600 transition-colors duration-300"
-              aria-label="Facebook"
-            >
-              Facebook
+            <a href="#" className={contactLinkClasses}>
+              <FaFacebookSquare className="text-lg" /> Facebook
             </a>
-            <a
-              href="#"
-              className="text-gray-500 hover:text-blue-600 transition-colors duration-300"
-              aria-label="Instagram"
-            >
-              Instagram
+            <a href="#" className={contactLinkClasses}>
+              <FaInstagramSquare className="text-lg" /> Instagram
             </a>
           </div>
         </section>
       </div>
 
       {/* Bottom Footer */}
-      <div className="mt-10 border-t border-gray-200 text-center py-4 text-gray-500 text-sm">
-        © {new Date().getFullYear()} Buy Minute. All rights reserved.
+      <div className="mt-12 text-center pt-6 text-white text-sm sm:text-base tracking-wide border-t border-gray-700">
+        © {new Date().getFullYear()} <span className="font-semibold text-blue-400">Buy Minute</span>. All rights reserved.
       </div>
     </footer>
   );
 }
-
 export default Footer;
