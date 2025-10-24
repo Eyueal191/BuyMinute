@@ -20,7 +20,6 @@ function LogIn() {
       const response = await Axios.post("/api/user/login", payload);
       const data = response.data;
       if (data.success) {
-        toast.success(data.message || "Login successful!");
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("email", data.email);
         localStorage.setItem("accessToken", data.accessToken);
@@ -68,7 +67,7 @@ function LogIn() {
             />
             <button
               type="button"
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500"
+              className="absolute top-[50px] right-3 -translate-y-1/2 text-gray-500 "
               onClick={() => setIsPasswordShown(prev => !prev)}
             >
               {isPasswordShown ? <FaEyeSlash /> : <FaEye />}

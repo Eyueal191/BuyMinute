@@ -23,10 +23,9 @@ function Header() {
   });
 
   const keyDownHandler = (e) => {
-    const key = e.key;
     const navItems = ["Home", "About", "Contact", "Shop", "Order", "Cart", isLoggedIn ? "Account" : "Log In"];
-    if (key === "ArrowUp" || key === "ArrowLeft") setFocusIndex(focusIndex === 0 ? navItems.length - 1 : focusIndex - 1);
-    if (key === "ArrowDown" || key === "ArrowRight") setFocusIndex(focusIndex === navItems.length - 1 ? 0 : focusIndex + 1);
+    if (e.key === "ArrowUp" || e.key === "ArrowLeft") setFocusIndex(focusIndex === 0 ? navItems.length - 1 : focusIndex - 1);
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") setFocusIndex(focusIndex === navItems.length - 1 ? 0 : focusIndex + 1);
   };
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
@@ -38,8 +37,7 @@ function Header() {
 
   useEffect(() => {
     const navItems = ["Home", "About", "Contact", "Shop", "Order", "Cart", isLoggedIn ? "Account" : "Log In"];
-    const focusLink = navItems[focusIndex];
-    const element = navRef.current[focusLink];
+    const element = navRef.current[navItems[focusIndex]];
     if (element) element.focus();
   }, [focusIndex, isLoggedIn]);
 
@@ -52,20 +50,24 @@ function Header() {
             <SquareMenu size={32} />
           </button>
           <figure className="cursor-pointer" onClick={() => navigate("/")}>
-            <img src={logo} alt="logo" className="w-24 h-16 rounded-lg transition-transform duration-300 hover:scale-105 shadow-sm" />
+            <img src={logo} alt="logo" className="w-24 h-14 rounded-lg transition-transform duration-300 hover:scale-105 shadow-sm" />
           </figure>
         </div>
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex justify-center space-x-6 w-2/6">
-          {["/", "/about", "/contact", "/shop"].map((path, idx) => {
-            const name = path === "/" ? "Home" : path.slice(1).charAt(0).toUpperCase() + path.slice(2);
-            return (
-              <NavLink key={name} to={path} className={navLinkClass} ref={(el) => (navRef.current[name] = el)} onKeyDown={keyDownHandler}>
-                {name}
-              </NavLink>
-            );
-          })}
+          <NavLink to="/" className={navLinkClass} ref={(el) => (navRef.current["Home"] = el)} onKeyDown={keyDownHandler}>
+            Home
+          </NavLink>
+          <NavLink to="/about" className={navLinkClass} ref={(el) => (navRef.current["About"] = el)} onKeyDown={keyDownHandler}>
+            About
+          </NavLink>
+          <NavLink to="/contact" className={navLinkClass} ref={(el) => (navRef.current["Contact"] = el)} onKeyDown={keyDownHandler}>
+            Contact
+          </NavLink>
+          <NavLink to="/shop" className={navLinkClass} ref={(el) => (navRef.current["Shop"] = el)} onKeyDown={keyDownHandler}>
+            Shop
+          </NavLink>
         </nav>
 
         {/* Right Icons */}
@@ -117,22 +119,56 @@ function Header() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden w-full bg-gray-700 mt-2 py-4 flex flex-col space-y-2 px-6 rounded-md shadow-md">
-          {["Home", "About", "Contact", "Shop", "Order"].map((name) => (
-            <NavLink
-              key={name}
-              to={name === "Home" ? "/" : `/${name.toLowerCase()}`}
-              className={navLinkClass}
-              onClick={toggleMenu}
-              ref={(el) => (navRef.current[name] = el)}
-              onKeyDown={keyDownHandler}
-            >
-              {name}
-            </NavLink>
-          ))}
+        <div className="lg:hidden w-full mt-2 py-4 flex flex-col space-y-2 px-6 rounded-md shadow-md bg-gradient-to-b from-gray-800 via-gray-700 to-gray-600 border border-gray-700">
+          <NavLink
+            to="/"
+            className={navLinkClass}
+            onClick={toggleMenu}
+            ref={(el) => (navRef.current["Home"] = el)}
+            onKeyDown={keyDownHandler}
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/about"
+            className={navLinkClass}
+            onClick={toggleMenu}
+            ref={(el) => (navRef.current["About"] = el)}
+            onKeyDown={keyDownHandler}
+          >
+            About
+          </NavLink>
+          <NavLink
+            to="/contact"
+            className={navLinkClass}
+            onClick={toggleMenu}
+            ref={(el) => (navRef.current["Contact"] = el)}
+            onKeyDown={keyDownHandler}
+          >
+            Contact
+          </NavLink>
+          <NavLink
+            to="/shop"
+            className={navLinkClass}
+            onClick={toggleMenu}
+            ref={(el) => (navRef.current["Shop"] = el)}
+            onKeyDown={keyDownHandler}
+          >
+            Shop
+          </NavLink>
+          <NavLink
+            to="/orders"
+            className={navLinkClass}
+            onClick={toggleMenu}
+            ref={(el) => (navRef.current["Order"] = el)}
+            onKeyDown={keyDownHandler}
+          >
+            Orders
+          </NavLink>
         </div>
       )}
     </header>
   );
 }
+
 export default Header;

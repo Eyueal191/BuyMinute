@@ -32,7 +32,7 @@ function Footer() {
             <img
               src={logo}
               alt="Buy Minute Logo"
-              className="w-36 h-20 object-cover rounded-xl border border-gray-300 transition-transform duration-300 hover:scale-105 shadow-md"
+              className="w-24 h-14 object-cover rounded-xl border border-gray-300 transition-transform duration-300 hover:scale-105 shadow-md"
             />
             <figcaption className="flex mt-2 items-center gap-3">
               <span className="font-bold text-2xl text-white">
