@@ -7,6 +7,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
+import connectDB from "./config/connectDB.js";
 
 import { ensureAuthenticated } from "./middleware/auth.js";
 import {
@@ -22,28 +23,17 @@ dotenv.config();
 const app = express();
 
 // --------------------
-// MongoDB Connection
-// --------------------
-async function connectDB() {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ MongoDB connected successfully");
-  } catch (err) {
-    console.error("❌ MongoDB connection failed:", err.message);
-    process.exit(1);
-  }
-}
-
-// --------------------
 // Middleware
 // --------------------
+// Allow any origin dynamically (works with credentials)
 app.use(cors({
-  origin: function(origin, callback) {
-    // Accept any origin
-    callback(null, origin);
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow requests like Postman
+    callback(null, origin); // allow actual origin
   },
   credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));

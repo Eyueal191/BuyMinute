@@ -83,7 +83,7 @@ function LogIn() {
             <button
               type="button"
               onClick={() => setIsPasswordShown((prev) => !prev)}
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 mb-[6px] transition-colors"
             >
               {isPasswordShown ? <FaEyeSlash /> : <FaEye />}
             </button>
