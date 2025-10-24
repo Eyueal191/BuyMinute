@@ -1,5 +1,5 @@
 import _ from "lodash";
-import Cart from "../models/Cart.js"; // your Cart model
+import Cart from "../models/cart.js"; // your Cart model
 // 1. addToCart.
  const addToCart = async (req, res) => {
   try {
