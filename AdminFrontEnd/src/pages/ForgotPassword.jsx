@@ -3,6 +3,7 @@ import { Form, useNavigate } from "react-router-dom";
 import Axios from "../axios/axios.config";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
+import { Mail } from "lucide-react";
 
 function ForgotPassword() {
   const { setEmail } = useContext(AuthContext);
@@ -55,26 +56,29 @@ function ForgotPassword() {
           onSubmit={submitHandler}
           ref={formRef}
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col relative">
             <label
               htmlFor="email"
               className="text-gray-700 font-medium text-sm sm:text-base mb-2 tracking-wide"
             >
               Email Address
             </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="you@example.com"
-              className="
-                w-full px-4 py-3 sm:py-4 border border-gray-300
-                rounded-md bg-gray-50 placeholder-gray-400
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-                focus:border-blue-500 transition duration-200 ease-in-out
-              "
-              required
-            />
+            <div className="relative">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@example.com"
+                className="
+                  w-full px-10 py-3 sm:py-4 border border-gray-300
+                  rounded-md bg-gray-50 placeholder-gray-400
+                  focus:outline-none focus:ring-2 focus:ring-blue-500
+                  focus:border-blue-500 transition duration-200 ease-in-out
+                "
+                required
+              />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            </div>
           </div>
 
           {/* Submit Button */}
