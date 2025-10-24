@@ -211,7 +211,7 @@ function Shop() {
         </div>
 
         {/* Product List */}
-        <div className="flex-1 bg-white rounded-xl border border-gray-200 shadow-md p-[16px] md:p-[18px]">
+        <div className="flex-1 bg-white rounded-xl border border-gray-200 shadow-md p-[2px] md:p-[6px]">
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <Loading />

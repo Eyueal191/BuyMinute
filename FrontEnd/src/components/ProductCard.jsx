@@ -27,7 +27,7 @@ function ProductCard({ product }) {
     <div
       role="button"
       tabIndex={0}
-      className="w-[240px] h-[420px] bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col overflow-hidden cursor-pointer 
+      className="w-[270px] h-[420px] bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col overflow-hidden cursor-pointer 
                  hover:shadow-lg hover:bg-gray-50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
       onClick={handleNavigation}
       onKeyDown={handleKeyDown}
