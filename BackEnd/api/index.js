@@ -5,34 +5,44 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import connectDB from "../config/connectDB.js";
-import {ensureAuthenticated} from "../middleware/auth.js";
+import { ensureAuthenticated } from "../middleware/auth.js";
 import {
-    userRoutes, productRoutes,
-    cartRoutes, orderRoutes
+  userRoutes,
+  productRoutes,
+  cartRoutes,
+  orderRoutes,
 } from "../routes/index.js";
+import serverless from "serverless-http"; // ✅ NEW LINE
+
 dotenv.config();
 const app = express();
+
+// Middleware setup
 app.use(
-    cors({
-        origin: true,
-        credentials: true,
-    })
-); // used to override the same origin policy.
-app.use(express.json()); // to parse json data to plain js data in the request.body.
-app.use(cookieParser()); // to parse the cookie make them from request.headers.cookie to request.cookie.
-app.use(morgan("dev")); // used to log the request.
-app.use(helmet({
-    crossOriginResourcePolicy: false
-})); // used to apply all security headers on the response.
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+app.use(express.json());
+app.use(cookieParser());
+app.use(morgan("dev"));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
+
+// Routes
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
-app.use("/api/cart",ensureAuthenticated, cartRoutes);
-app.use("/api/order",ensureAuthenticated, orderRoutes);
-const PORT = process.env.PORT || 8080;
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log("Server is running on", PORT);
-    });
-}).catch((err) => {
-    console.error("Failed to connect to DB", err);
+app.use("/api/cart", ensureAuthenticated, cartRoutes);
+app.use("/api/order", ensureAuthenticated, orderRoutes);
+
+// Connect to DB once
+connectDB().catch((err) => {
+  console.error("Failed to connect to DB", err);
 });
+
+// ✅ Instead of app.listen(PORT)
+export const handler = serverless(app);
