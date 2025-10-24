@@ -4,7 +4,9 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import connectDB from "../config/connectDB.js";
+import mongoose from "mongoose";
+import serverless from "serverless-http";
+
 import { ensureAuthenticated } from "../middleware/auth.js";
 import {
   userRoutes,
@@ -12,21 +14,36 @@ import {
   cartRoutes,
   orderRoutes,
 } from "../routes/index.js";
-import serverless from "serverless-http";
 
 dotenv.config();
 const app = express();
 
 // --------------------
-// CORS Setup (allow any origin)
+// Lazy Database Connection for Serverless
+// --------------------
+let cached = global.mongoose;
+if (!cached) cached = global.mongoose = { conn: null };
+
+async function connectDB() {
+  if (cached.conn) return cached.conn;
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    cached.conn = conn;
+    console.log("MongoDB connected");
+    return conn;
+  } catch (err) {
+    console.error("DB connection failed", err);
+    throw err;
+  }
+}
+
+// --------------------
+// CORS Setup
 // --------------------
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // allow requests with no origin (like Postman) or any origin dynamically
-      callback(null, true);
-    },
-    credentials: true, // allow cookies
+    origin: (origin, callback) => callback(null, true), // allow all origins
+    credentials: true,
   })
 );
 
@@ -43,19 +60,39 @@ app.use(
 );
 
 // --------------------
+// Ensure DB connection per request
+// --------------------
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ error: "DB connection failed" });
+  }
+});
+
+// --------------------
 // Routes
 // --------------------
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
-app.use("/api/cart", ensureAuthenticated, cartRoutes);
-app.use("/api/order", ensureAuthenticated, orderRoutes);
+app.use("/api/cart", async (req, res, next) => {
+  try {
+    await ensureAuthenticated(req, res, next);
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ error: "Authentication failed" });
+  }
+}, cartRoutes);
 
-// --------------------
-// Database connection
-// --------------------
-connectDB().catch((err) => {
-  console.error("Failed to connect to DB", err);
-});
+app.use("/api/order", async (req, res, next) => {
+  try {
+    await ensureAuthenticated(req, res, next);
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ error: "Authentication failed" });
+  }
+}, orderRoutes);
 
 // --------------------
 // Export handler for Vercel
