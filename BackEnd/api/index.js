@@ -12,18 +12,24 @@ import {
   cartRoutes,
   orderRoutes,
 } from "../routes/index.js";
-import serverless from "serverless-http"; // ✅ NEW LINE
+import serverless from "serverless-http";
 
 dotenv.config();
 const app = express();
 
-// Middleware setup
+// --------------------
+// CORS Setup (allow any origin)
+// --------------------
 app.use(
   cors({
-    origin: true,
-    credentials: true,
+    origin: "*",   // allow all origins
+    // credentials: true // ⚠️ if using cookies, you cannot set origin: "*"
   })
 );
+
+// --------------------
+// Middleware
+// --------------------
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -33,16 +39,22 @@ app.use(
   })
 );
 
+// --------------------
 // Routes
+// --------------------
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/cart", ensureAuthenticated, cartRoutes);
 app.use("/api/order", ensureAuthenticated, orderRoutes);
 
-// Connect to DB once
+// --------------------
+// Database connection
+// --------------------
 connectDB().catch((err) => {
   console.error("Failed to connect to DB", err);
 });
 
-// ✅ Instead of app.listen(PORT)
+// --------------------
+// Export handler for Vercel
+// --------------------
 export const handler = serverless(app);
