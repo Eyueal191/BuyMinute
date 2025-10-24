@@ -1,6 +1,6 @@
 import Product from "../models/product.js"
 import Category from "../models/category.js"
-import SubCategory from "../models/subcategory.js"
+import SubCategory from "../models/subCategory.js"
 import uploadMultipleFiles from "../utility/uploadMultipleFiles.js"
 //1. createProduct.
 const addProduct = async (req, res) => {
