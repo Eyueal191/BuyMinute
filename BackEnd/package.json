@@ -1,11 +1,18 @@
 {
   "name": "backend",
   "version": "1.0.0",
+  "description": "Production-ready Express backend for Render deployment",
+  "author": "",
+  "license": "MIT",
   "type": "module",
+  "main": "index.js",
   "scripts": {
-    "dev": "nodemon api/index.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "format": "prettier --write ."
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
@@ -20,7 +27,6 @@
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "resend": "^6.0.1",
-    "serverless-http": "^4.0.0",
     "stripe": "^18.5.0"
   },
   "devDependencies": {
