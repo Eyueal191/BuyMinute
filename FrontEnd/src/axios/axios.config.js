@@ -2,7 +2,7 @@ import axios from "axios";
 
 // ✅ Create Axios instance
 const Axios = axios.create({
-  baseURL: "https://buy-minute.vercel.app",
+  baseURL: "https://buy-minute-1acu.vercel.app",
   timeout: 10000,
   withCredentials: true, // 🔥 ensures cookies (refreshToken) are sent automatically
 });

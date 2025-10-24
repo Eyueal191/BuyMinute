@@ -22,8 +22,11 @@ const app = express();
 // --------------------
 app.use(
   cors({
-    origin: "*",   // allow all origins
-    // credentials: true // ⚠️ if using cookies, you cannot set origin: "*"
+    origin: (origin, callback) => {
+      // allow requests with no origin (like Postman) or any origin dynamically
+      callback(null, true);
+    },
+    credentials: true, // allow cookies
   })
 );
 
