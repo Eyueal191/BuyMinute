@@ -1,3 +1,5 @@
+// api/index.js
+
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -15,11 +17,13 @@ import {
   orderRoutes,
 } from "../routes/index.js";
 
+// Load environment variables
 dotenv.config();
+
 const app = express();
 
 // --------------------
-// Lazy Database Connection for Serverless
+// Lazy DB Connection (for serverless)
 // --------------------
 let cached = global.mongoose;
 if (!cached) cached = global.mongoose = { conn: null };
@@ -29,20 +33,20 @@ async function connectDB() {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);
     cached.conn = conn;
-    console.log("MongoDB connected");
+    console.log("✅ MongoDB connected");
     return conn;
   } catch (err) {
-    console.error("DB connection failed", err);
+    console.error("❌ MongoDB connection failed:", err.message);
     throw err;
   }
 }
 
 // --------------------
-// CORS Setup
+// CORS
 // --------------------
 app.use(
   cors({
-    origin: (origin, callback) => callback(null, true), // allow all origins
+    origin: (origin, callback) => callback(null, true),
     credentials: true,
   })
 );
@@ -60,14 +64,15 @@ app.use(
 );
 
 // --------------------
-// Ensure DB connection per request
+// Ensure DB connection on each request
 // --------------------
 app.use(async (req, res, next) => {
   try {
     await connectDB();
     next();
   } catch (err) {
-    res.status(500).json({ error: "DB connection failed" });
+    console.error("DB connection middleware failed:", err.message);
+    res.status(500).json({ error: "Database connection failed" });
   }
 });
 
@@ -76,11 +81,12 @@ app.use(async (req, res, next) => {
 // --------------------
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
+
 app.use("/api/cart", async (req, res, next) => {
   try {
     await ensureAuthenticated(req, res, next);
   } catch (err) {
-    console.error(err);
+    console.error("Cart auth failed:", err);
     res.status(401).json({ error: "Authentication failed" });
   }
 }, cartRoutes);
@@ -89,12 +95,13 @@ app.use("/api/order", async (req, res, next) => {
   try {
     await ensureAuthenticated(req, res, next);
   } catch (err) {
-    console.error(err);
+    console.error("Order auth failed:", err);
     res.status(401).json({ error: "Authentication failed" });
   }
 }, orderRoutes);
 
 // --------------------
-// Export handler for Vercel
+// Export for Vercel
 // --------------------
-export const handler = serverless(app);
+// ❗ Vercel requires a *default export* (not a named one)
+export default serverless(app);
