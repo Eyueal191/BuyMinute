@@ -3,11 +3,11 @@ import { Form, Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Axios from "../axios/axios.config.js";
 import toast from "react-hot-toast";
-
+import { useNavigate } from "react-router-dom";
 function LogIn() {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const formRef = useRef(null);
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -26,12 +26,13 @@ function LogIn() {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("loggedIn", true);
         console.log("AccessToken:", data.accessToken)
+        navigate("/cart")
+
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login failed.");
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 md:px-8 bg-gray-50">
       <div className="w-full max-w-md sm:max-w-md md:max-w-lg lg:max-w-xl 2xl:max-w-2xl bg-white p-6 sm:p-8 md:p-10 rounded-lg shadow-md">

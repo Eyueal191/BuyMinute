@@ -1,26 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Bebas+Neue&display=swap');
 @import "tailwindcss";
-* {font-family: "Outfit", sans-serif}
-/* Define base typography styles for your design system */
+
+/* Base font for all text */
+* {
+  font-family: "Outfit", sans-serif;
+}
+
+/* Tailwind Base Layer */
 @layer base {
-  /* Font Family & Base Rules */
+  /* Primary & Title Font Variables */
   :root {
-    --font-primary: "Poppins", "Inter", "Roboto", sans-serif;
+    --font-primary: "Outfit", sans-serif;  /* Body / General text */
+    --font-title: "Bebas Neue", sans-serif; /* Titles & Headings */
   }
 
   html {
     font-family: var(--font-primary);
-    color: #111827; /* base text color */
+    color: #111827; /* Base text color */
   }
 
   /* H1 - Hero / Display */
   h1 {
+    font-family: var(--font-title);
     @apply text-white leading-tight text-[24px] sm:text-[28px] md:text-[36px] lg:text-[42px] xl:text-[48px] 2xl:text-[56px];
+    letter-spacing: 0.5px;
   }
 
-  /* H2 - Section Header */
+  /* H2 - Section Header / Category Title */
   h2 {
+    font-family: var(--font-title);
     @apply font-semibold leading-snug text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] xl:text-[36px] 2xl:text-[42px];
+    letter-spacing: 0.4px;
   }
 
   /* H3 - Product / Card Title */

@@ -4,13 +4,14 @@ import hero from "../assets/Hero-image.jpeg";
 import Title from "../components/Title.jsx";
 import toast from "react-hot-toast";
 import ProductCard from "../components/ProductCard.jsx";
-import { FaGreaterThan, FaLessThan } from "react-icons/fa";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import { BiSupport } from "react-icons/bi";
 import { SiContactlesspayment } from "react-icons/si";
 import Loading from "../components/Loading.jsx";
-
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 function Home() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [electronics, setElectronics] = useState([]);
   const [homeAndKitchen, setHomeAndKitchen] = useState([]);
@@ -32,7 +33,6 @@ function Home() {
       if (data.success) {
         const getCategoryProducts = (name) =>
           data.products.filter(p => p.category?.name?.toLowerCase() === name.toLowerCase()) || [];
-
         setElectronics(getCategoryProducts("Electronics"));
         setHomeAndKitchen(getCategoryProducts("Home & Kitchen"));
         setClothing(getCategoryProducts("Clothing"));
@@ -64,7 +64,7 @@ function Home() {
 
   const renderCategory = (products, page, setPage, title) => (
     <div className="flex flex-col items-center">
-      <h2 className="text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] font-semibold border border-gray-300 rounded-md px-6 py-2 mb-6 min-w-[20vw] text-center">
+      <h2 className="text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] font-semibold border border-gray-300 rounded-md px-6 py-2 mb-6 min-w-[20vw] text-center font-title">
         <Title text1={title} />
       </h2>
       <div className="flex items-center gap-4">
@@ -73,7 +73,7 @@ function Home() {
           disabled={page <= 0 || loading}
           className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <FaLessThan size={48} />
+          <ChevronLeft size={48} />
         </button>
 
         {loading
@@ -90,14 +90,13 @@ function Home() {
           disabled={page >= products.length - columns || loading}
           className="bg-gray-200 p-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <FaGreaterThan size={48} />
+          <ChevronRight size={48} />
         </button>
       </div>
     </div>
   );
 
   if (loading && electronics.length === 0 && homeAndKitchen.length === 0 && clothing.length === 0) {
-    // show full-page loader if initial fetch
     return (
       <div className="flex justify-center items-center h-screen w-full">
         <Loading />
@@ -118,12 +117,14 @@ function Home() {
         </div>
         <div className="flex-1 flex flex-col justify-center items-center text-center sm:text-left bg-white px-6 py-8 rounded-r-2xl space-y-6 shadow-md">
           <div className="flex flex-col bg-gray-100 py-4 px-6 rounded">
-            <Title text1="SHOP" text2="OUR" addSolidLineBefore />
-            <Title text1="BEST" />
-            <Title text1="PRODUCTS" addSolidLineAfter />
+            <Title text1="SHOP" text2="OUR" addSolidLineBefore className="font-title" />
+            <Title text1="BEST" className="font-title" />
+            <Title text1="PRODUCTS" addSolidLineAfter className="font-title" />
           </div>
           <div className="mt-6">
-            <button className="bg-blue-500 font-bold text-white text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px] 2xl:text-[26px] px-6 py-3 rounded-md hover:bg-blue-700 transition duration-300">
+            <button onClick={()=>{
+              navigate("/shop")
+            }} className="bg-blue-500 font-bold text-white text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px] 2xl:text-[26px] px-6 py-3 rounded-md hover:bg-blue-700 transition duration-300">
               SHOP NOW
             </button>
           </div>
@@ -139,7 +140,7 @@ function Home() {
 
       {/* Policy Section */}
       <section className="mt-12 py-12 flex flex-col align-strech border border-gray-50 w-[70vw] mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 xxl:px-12 py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12 xxl:py-14">
-        <div className="max-w-full ml-[1vw] mb-8 text-lef text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px]">
+        <div className="max-w-full ml-[1vw] mb-8 text-lef text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] font-title">
           <Title text1="Our" text2="Policy" addSolidLineAfter={true} />
         </div>
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8 w-full">

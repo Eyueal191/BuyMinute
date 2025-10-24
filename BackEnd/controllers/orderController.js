@@ -6,7 +6,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const placeOrderByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { orderItems,} = req.body;
+    const { orderItems} = req.body;
+    console.log("userId", userId)
+    console.log("orderItems", orderItems)
     let userOrder = await Order.findOne({ user: userId });
     if (!userOrder) {
       // Create new order if none exists

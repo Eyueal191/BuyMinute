@@ -165,7 +165,7 @@ function Shop() {
                 key={i}
                 className="border border-gray-200 sm:border-gray-500 rounded-xl p-[16px] md:p-[18px] bg-white sm:bg-gray-800 hover:shadow-md transition-shadow duration-200"
               >
-                <h3 className="text-[16px] sm:text-[18px] font-semibold mb-3 text-gray-800 sm:text-gray-100">
+                <h3 className="text-[16px] sm:text-[18px] font-semibold mb-3 text-gray-800 sm:text-gray-100 font-title">
                   {section.title}
                 </h3>
                 {section.items.map((name) => (
@@ -187,11 +187,10 @@ function Shop() {
 
             {/* Price Range */}
             <div className="border border-gray-200 sm:border-gray-500 rounded-xl p-[16px] md:p-[18px] bg-white sm:bg-gray-800">
-              <h3 className="text-[16px] sm:text-[18px] font-semibold mb-3 text-gray-800 sm:text-gray-100">
+              <h3 className="text-[16px] sm:text-[18px] font-semibold mb-3 text-gray-800 sm:text-gray-100 font-title">
                 Price Range
               </h3>
               <div className="flex flex-col sm:flex-row gap-3">
-                
                 <input
                   type="number"
                   placeholder="Min"

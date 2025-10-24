@@ -100,7 +100,7 @@ function PlaceOrder() {
         status: "processing",
         paymentStatus: "pending",
       }));
-      const res = await Axios.post(`/api/order/${userId}`, { orderItems: orderItems});
+      const res = await Axios.post(`/api/order/user/${userId}`, { orderItems: orderItems});
       const data = res.data;
       if (data.success) {
         setOrderItems(orderItems);
@@ -198,7 +198,7 @@ function PlaceOrder() {
       )}
 
       <div className="w-full sm:w-1/2 flex flex-col gap-4 border border-gray-300 p-6 rounded-lg">
-        <h1 className="text-xl font-semibold">Total: ${totalPrice.toFixed(2)}</h1>
+        <h1 className="text-xl font-semibold text-green-500">Total: ${totalPrice.toFixed(2)}</h1>
 
         <Title text1="Choose" text2="Payment Method" addSolidLineAfter />
 
