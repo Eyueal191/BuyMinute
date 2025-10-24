@@ -2,8 +2,9 @@
 import axios from "axios";
 // ✅ Create Axios instance
 const Axios = axios.create({
-    baseURL: "http://localhost:8080",
-    timeout: 20000,
+  baseURL:"https://buyminute-2.onrender.com",
+  timeout: 10000,
+  withCredentials: true, // 🔥 ensures cookies (refreshToken) are sent automatically
 });
 // ✅ Request interceptor: attach access token
 Axios.interceptors.request.use(

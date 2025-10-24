@@ -37,12 +37,13 @@ async function connectDB() {
 // --------------------
 // Middleware
 // --------------------
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // allow frontend
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: function(origin, callback) {
+    // Accept any origin
+    callback(null, origin);
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
