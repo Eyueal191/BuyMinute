@@ -1,7 +1,7 @@
 import axios from "axios";
 // ✅ Create Axios instance
 const Axios = axios.create({
-  baseURL:"http://localhost:5000",
+  baseURL:"https://buyminuteserver.onrender.com",
   timeout: 10000,
   withCredentials: true, // 🔥 ensures cookies (refreshToken) are sent automatically
 });
