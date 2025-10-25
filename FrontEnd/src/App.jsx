@@ -31,7 +31,6 @@ import Profile from "./pages/account/Profile.jsx";
 import Security from "./pages/account/Security.jsx";
 import AccountLayout from "./pages/account/AccountLayout.jsx";
 import RootLayout from "./pages/layouts/RootLayOut.jsx";
-
 // API actions
 import {
   signUpAction,
@@ -43,7 +42,6 @@ import {
 
 function App() {
   const dispatch = useDispatch();
-
   // Protected route wrapper
   const RequireAuth = ({ children }) => {
     const [loggedIn, setLoggedIn] = useState(

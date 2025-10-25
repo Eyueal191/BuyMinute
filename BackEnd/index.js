@@ -25,14 +25,20 @@ const app = express();
 // --------------------
 // Middleware
 // --------------------
-// Allow any origin dynamically (works with credentials)
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow requests like Postman
-    callback(null, origin); // allow actual origin
-  },
-  credentials: true
-}));
+
+// ✅ Allow all origins dynamically (for development/testing)
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // allow requests without origin (e.g. Postman)
+      console.log("🌍 CORS request from:", origin); // optional, for debugging
+      return callback(null, true); // dynamically allow all origins
+    },
+    credentials: true, // ✅ enables cookies, tokens, etc.
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -49,14 +55,7 @@ app.use(
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/cart", ensureAuthenticated, cartRoutes);
-app.use("/api/order", ensureAuthenticated, orderRoutes);
-
-// --------------------
-// Root route
-// --------------------
-app.get("/", (req, res) => {
-  res.send("🚀 API is running...");
-});
+app.use("/api/order",orderRoutes);
 
 // --------------------
 // Server Start

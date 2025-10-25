@@ -21,7 +21,7 @@ function LogIn() {
       const data = response.data;
       if (data.success) {
         localStorage.setItem("userId", data.userId);
-        localStorage.setItem("email", data.email);
+        localStorage.setItem("email", data.userEmail);
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("loggedIn", true);
         console.log("AccessToken:", data.accessToken)
@@ -81,7 +81,7 @@ function LogIn() {
             Log In
           </button>
 
-          <Link to="/forgotpassword" className="text-blue-600 hover:underline text-center w-full">
+          <Link to="/forgot-password" className="text-blue-600 hover:underline text-center w-full">
             Forgot Password?
           </Link>
 

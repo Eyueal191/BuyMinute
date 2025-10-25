@@ -38,7 +38,7 @@ function Footer() {
               <span className="font-bold text-2xl text-white">
                 Buy <span className="text-white/70">Minute</span>
               </span>
-              <span className="block w-20 h-1 bg-white/50 rounded-xl"></span>
+              <span className="block w-20 h-1 bg-white/50 rounded-xl mb-[-18px]"></span>
             </figcaption>
           </figure>
           <p className="text-white/90 text-sm leading-relaxed">

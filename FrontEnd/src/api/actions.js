@@ -33,7 +33,7 @@ const signUpAction = async ({
             message: error.response.data.message || "Signup failed. Please try again.",
         }
     }
-}
+};
  const logInAction = async ({ request }) => {
   try {
     const formData = await request.formData();
@@ -77,7 +77,6 @@ const signUpAction = async ({
     };
   }
 };
-
 const verifyEmailOtpAction = async ({
     request
 }) => {
@@ -119,15 +118,15 @@ const forgotPasswordAction = async ({
     try {
         let formData = await request.formData();
         let email = formData.get("email")
-        console.log("email", email)
         let payload = JSON.stringify({
             email
         })
-        let response = await Axios.post("http://localhost:8080/api/user/forgot-password", payload, {
+        let response = await Axios.post("/api/user/forgot-password", payload, {
             headers: {
                 "Content-Type": "application/json"
             }
         })
+        localStorage.setItem("email", email)
         let data = response.data
         return data
     } catch (error) {
@@ -140,8 +139,7 @@ const forgotPasswordAction = async ({
                 "Something went wrong",
         };
     }
-}
-
+};
 const verifyPasswordResetOtpAction = async ({
     request
 }) => {
@@ -155,16 +153,13 @@ const verifyPasswordResetOtpAction = async ({
             email
         });
 
-        const response = await Axios.post(
-            "http://localhost:8080/api/user/verify-password-otp",
+        const response = await Axios.post( "/api/user/verify-password-otp",
             data, {
                 headers: {
                     "Content-Type": "application/json"
                 }
             }
         );
-
-        console.log("message", response.data.message);
         return response.data;
     } catch (error) {
         console.error(error.response.data || error.message);
@@ -182,11 +177,9 @@ const passwordResetAction = async ({
 }) => {
     try {
         const formData = await request.formData()
-
         const email = formData.get("email")
         const password = formData.get("password")
         const cpassword = formData.get("cpassword")
-
         if (password.toLowerCase() !== cpassword.toLowerCase()) {
             return {
                 error: true,
@@ -194,12 +187,11 @@ const passwordResetAction = async ({
                 message: "Password and confirm password must match",
             }
         }
-
         const payLoad = {
             email,
             password
         }
-        const response = await Axios.post("http://localhost:8080/api/user/reset-password", payLoad, {
+        const response = await Axios.post("/api/user/reset-password", payLoad, {
             headers: {
                 "Content-Type": "application/json"
             }
@@ -213,8 +205,7 @@ const passwordResetAction = async ({
             message: error.response.data.message || "Reset failed. Please try again.",
         }
     }
-}
-
+};
 export {
     signUpAction,
     verifyEmailOtpAction,
@@ -222,4 +213,4 @@ export {
     forgotPasswordAction,
     logInAction,
     passwordResetAction
-}
+};

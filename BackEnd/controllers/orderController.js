@@ -1,14 +1,14 @@
-import Order from "../models/order.js";
+import Order from "../models/Order.js";
 import Stripe from "stripe";
 import _ from "lodash";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 // 1. placeOrderbyUserId.
+
 const placeOrderByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
     const { orderItems} = req.body;
-    console.log("userId", userId)
-    console.log("orderItems", orderItems)
     let userOrder = await Order.findOne({ user: userId });
     if (!userOrder) {
       // Create new order if none exists
@@ -48,14 +48,14 @@ const placeOrderByUserId = async (req, res) => {
     });
   }
 };
+
 // 2. Get all orders for a user.
+
 const getUserOrdersByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log("userId", userId);
     let userOrders = await Order.findOne({ user: userId })
       .populate("items.product").lean();
-      console.log("userId:", userOrders);
     if (!userOrders || userOrders.length === 0) {
       return res.status(404).json({
         success: false,
@@ -78,21 +78,14 @@ const getUserOrdersByUserId = async (req, res) => {
   }
 };
 // 3. Get all orders (admin).
+
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate({ path: "items.product" })
-      .populate({ path: "user" })
-      .lean();
-
-    if (!orders || orders.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "No orders found",
-      });
-    }
-
+  const orders = await Order.find({})
+  .populate("user") // populate user info
+  .populate("items.product") // populate each product info
+  .lean();
+    console.log("orders", orders)
     return res.status(200).json({
       success: true,
       error: false,
@@ -112,17 +105,11 @@ const deleteOrderItemByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
     const { cancelItem } = req.body;
-
-console.log("userId:", userId);
-console.log("req.body:", req.body);
-console.log("cancelItem:", cancelItem);
-
     if (!cancelItem?._id) {
       return res
         .status(400)
         .json({ success: false, message: "cancelItem._id is required" });
     }
-
 // Find the order
     const userOrder = await Order.findOne({ user: userId });
     if (!userOrder) {
@@ -159,6 +146,7 @@ console.log("cancelItem:", cancelItem);
 };
 
 // 5. Update order by ID.
+
 const updateOrderItemById = async (req, res) => {
   try {
     const { itemId } = req.params;
@@ -194,7 +182,9 @@ const updateOrderItemById = async (req, res) => {
     });
   }
 };
+
  // 6. updateUserOrderByUserId.
+
 const updateUserOrderByUserId = async (req, res) => {
   try {
     const { userId } = req.params;

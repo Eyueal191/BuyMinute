@@ -16,17 +16,21 @@ function Security() {
       const formData = new FormData(e.target);
       const newPassword = formData.get("new-password");
       const confirmPassword = formData.get("confirm-password");
-
+      const email=localStorage.getItem("email");
       if (newPassword !== confirmPassword) {
         toast.error("New password and confirm password must match.");
         setLoading(false);
         return;
       }
-
-      const res = await Axios.post(`/api/user/reset-password/${userId}`, {
-        password: newPassword,
-      });
-
+ const payLoad = {
+            email,
+            password:newPassword
+        }
+        const res = await Axios.post("/api/user/reset-password", payLoad, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
       if (res.data.success) {
         toast.success(res.data.message || "Password changed successfully!");
         e.target.reset();

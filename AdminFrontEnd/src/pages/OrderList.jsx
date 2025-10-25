@@ -8,27 +8,39 @@ function OrderList() {
   const [orderList, setOrderList] = useState([]);
   const [update, setUpdate] = useState(false);
 
+  // Fetch all orders (admin or filtered by email)
   const getOrdersList = async () => {
+    setOrderLoading(true);
     try {
-      const { data } = await Axios.get("/api/order/");
+      const email = localStorage.getItem("email"); // send email as query param
+      const res = await Axios.get("/api/order/", {
+        params: { email },
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = res.data;
       if (data.success) {
         setOrderList(data.orders);
+      } else {
+        setOrderList([]);
+        toast.error(data.message || "No orders found");
       }
     } catch (error) {
+      console.error("Fetch orders error:", error.response || error);
       toast.error(error.response?.data?.message || "Something went wrong");
+      setOrderList([]);
     } finally {
-      setOrderLoading(false)
-    };
+      setOrderLoading(false);
+    }
   };
 
   useEffect(() => {
     getOrdersList();
-  }, [update]); // refresh list whenever `update` changes
+  }, [update]);
 
   if (orderLoading) {
     return (
       <div className="font-semibold text-xl text-center py-6 text-gray-700">
-        Loading...
+        Loading orders...
       </div>
     );
   }
@@ -37,10 +49,10 @@ function OrderList() {
     <div className="space-y-6 p-4 sm:p-6 md:p-8 lg:p-10">
       {orderList.length ? (
         orderList.map((order) => (
-          <OrderCard 
-            key={order._id} 
-            order={order} 
-            setUpdate={setUpdate} 
+          <OrderCard
+            key={order._id}
+            order={order}
+            setUpdate={setUpdate}
             className="bg-white rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-all p-6"
           />
         ))

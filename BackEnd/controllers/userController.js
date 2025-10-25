@@ -86,7 +86,6 @@ const logInController = async (req, res) => {
         success: false,
       });
     }
-
     const passwordMatch = await comparePassword(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({
@@ -194,14 +193,27 @@ const verifyEmailOTPController = async (req, res) => {
 // 4. Verify Password OTP
 const verifyPasswordOTPController = async (req, res) => {
     try {
-        const {
-            email,
-            otp
-        } = req.body;
-        const user = await User.findOne({
-            email
-        });
+        let { email, otp } = req.body;
+         console.log("Email", email);
+         console.log("OTP", otp);
+        if (!email || !otp) {
+            return res.status(400).json({
+                message: "Email and OTP are required",
+                error: true,
+                success: false
+            });
+        }
 
+        otp = Number(otp);
+        if (isNaN(otp)) {
+            return res.status(400).json({
+                message: "Invalid OTP format",
+                error: true,
+                success: false
+            });
+        }
+
+        const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             return res.status(404).json({
                 message: "User not found",
@@ -210,21 +222,34 @@ const verifyPasswordOTPController = async (req, res) => {
             });
         }
 
-        if (Number(user.verifyPasswordOTP) === Number(otp)) {
-            return res.status(200).json({
-                message: "Verified successfully",
-                error: false,
-                success: true
+        if (!user.verifyPasswordOTP || !user.verifyPasswordOTPExpiry || user.verifyPasswordOTPExpiry < new Date()) {
+            return res.status(400).json({
+                message: "OTP expired or invalid",
+                error: true,
+                success: false
+            });
+        };
+        if (user.verifyPasswordOTP !== Number(otp)) {
+            return res.status(400).json({
+                message: "Invalid verification code",
+                error: true,
+                success: false
             });
         }
 
-        res.status(400).json({
-            message: "Invalid verification code",
-            error: true,
-            success: false
+        // OTP verified successfully — clear OTP
+        user.verifyPasswordOTP = undefined;
+        user.verifyPasswordOTPExpiry = undefined;
+        await user.save();
+
+        return res.status(200).json({
+            message: "Verified successfully",
+            error: false,
+            success: true
         });
+
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: error.message || "Internal Server Error"
         });
     }
@@ -344,14 +369,10 @@ const refreshAccessTokenController = async (req, res) => {
 // 7. Reset Password
 const resetPasswordController = async (req, res) => {
     try {
-        const {
+        const {email,
             password
         } = req.body;
-
-        let {userId}=req.params;
-
-        let user = await User.findById(userId);
-
+        let user = await User.findOne({email:email});
         if (!user) {
             return res.status(404).json({
                 message: "Unregisted user",

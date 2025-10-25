@@ -15,7 +15,7 @@ function PlaceOrder() {
   const dispatch = useDispatch();
   const userId = localStorage.getItem("userId");
   const userCartItems = useSelector((state) => state.userCart.userCart.items);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [hasBeenPlaced, setHasBeenPlaced] = useState(false);
   const [placing, setPlacing] = useState(false);
   const [clientSecret, setClientSecret] = useState("");
@@ -30,13 +30,11 @@ function PlaceOrder() {
     phone: "",
   });
 
-  // Handle address input changes
   const addressHandler = (e) => {
     const { name, value } = e.target;
     setAddress((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Fetch user cart
   const getUserCart = async () => {
     try {
       setPlacing(true);
@@ -54,12 +52,11 @@ function PlaceOrder() {
     }
   };
 
-  // Clear user cart
   const clearUserCart = async () => {
     try {
       const { data } = await Axios.delete(`/api/cart/${userId}/clear`);
       if (data.success) {
-        toast.success(data.message);
+        // ✅ Removed success toast here
         await getUserCart();
       }
       return data;
@@ -69,7 +66,6 @@ function PlaceOrder() {
     }
   };
 
-  // Place order
   const placeOrder = async () => {
     if (placing) {
       return toast.error("Order is already being placed. Please wait...");
@@ -100,7 +96,7 @@ function PlaceOrder() {
         status: "processing",
         paymentStatus: "pending",
       }));
-      const res = await Axios.post(`/api/order/user/${userId}`, { orderItems: orderItems});
+      const res = await Axios.post(`/api/order/user/${userId}`, { orderItems });
       const data = res.data;
       if (data.success) {
         setOrderItems(orderItems);
@@ -108,12 +104,11 @@ function PlaceOrder() {
         toast.success(data.message);
 
         await clearUserCart();
-            
+
         if (paymentMethod === "card" && data.clientSecret) {
           setClientSecret(data.clientSecret);
-        }
-        else {
-          navigate("/orders")
+        } else {
+          navigate("/orders");
         }
       }
     } catch (error) {
@@ -147,7 +142,7 @@ function PlaceOrder() {
               value={address.country}
               onChange={addressHandler}
               placeholder="Country"
-              className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:border-blue-500 outline-none transition-colors"
+              className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:border-green-500 outline-none transition-colors placeholder:text-[15px] sm:placeholder:text-[16px]"
             />
             <input
               type="text"
@@ -155,7 +150,7 @@ function PlaceOrder() {
               value={address.state}
               onChange={addressHandler}
               placeholder="State"
-              className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:border-blue-500 outline-none transition-colors"
+              className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:border-green-500 outline-none transition-colors placeholder:text-[15px] sm:placeholder:text-[16px]"
             />
           </div>
 
@@ -166,7 +161,7 @@ function PlaceOrder() {
               value={address.city}
               onChange={addressHandler}
               placeholder="City"
-              className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:border-blue-500 outline-none transition-colors"
+              className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:border-green-500 outline-none transition-colors placeholder:text-[15px] sm:placeholder:text-[16px]"
             />
             <input
               type="text"
@@ -174,7 +169,7 @@ function PlaceOrder() {
               value={address.street}
               onChange={addressHandler}
               placeholder="Street"
-              className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:border-blue-500 outline-none transition-colors"
+              className="flex-1 border border-gray-400 px-3 py-2 rounded-lg focus:border-green-500 outline-none transition-colors placeholder:text-[15px] sm:placeholder:text-[16px]"
             />
           </div>
 
@@ -184,7 +179,7 @@ function PlaceOrder() {
             value={address.postalCode}
             onChange={addressHandler}
             placeholder="Postal Code"
-            className="w-full border border-gray-400 px-3 py-2 rounded-lg focus:border-blue-500 outline-none transition-colors"
+            className="w-full border border-gray-400 px-3 py-2 rounded-lg focus:border-green-500 outline-none transition-colors placeholder:text-[15px] sm:placeholder:text-[16px]"
           />
           <input
             type="text"
@@ -192,7 +187,7 @@ function PlaceOrder() {
             value={address.phone}
             onChange={addressHandler}
             placeholder="Phone"
-            className="w-full border border-gray-400 px-3 py-2 rounded-lg focus:border-blue-500 outline-none transition-colors"
+            className="w-full border border-gray-400 px-3 py-2 rounded-lg focus:border-green-500 outline-none transition-colors placeholder:text-[15px] sm:placeholder:text-[16px]"
           />
         </div>
       )}
@@ -204,10 +199,10 @@ function PlaceOrder() {
 
         <div className="flex gap-4">
           <button
-            className={`flex-1 py-3 font-semibold rounded-xl shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`flex-1 py-3 text-[17px] sm:text-[18px] font-semibold rounded-xl shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 ${
               paymentMethod === "cod"
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-green-600 text-white hover:bg-green-700"
+                : "bg-gray-500 text-white hover:bg-gray-600"
             }`}
             onClick={() => setPaymentMethod("cod")}
           >
@@ -215,10 +210,10 @@ function PlaceOrder() {
           </button>
 
           <button
-            className={`flex-1 py-3 font-semibold rounded-xl shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`flex-1 py-3 text-[17px] sm:text-[18px] font-semibold rounded-xl shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 ${
               paymentMethod === "card"
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-green-600 text-white hover:bg-green-700"
+                : "bg-gray-500 text-white hover:bg-gray-600"
             }`}
             onClick={() => setPaymentMethod("card")}
           >
@@ -227,7 +222,7 @@ function PlaceOrder() {
         </div>
 
         <button
-          className="mt-4 text-[28px] py-2 px-3 font-bold rounded-xl transition-colors duration-300 shadow-md bg-black hover:bg-blue-600 hover:border hover:border-black text-white hover:brightness-110"
+          className="mt-4 text-[20px] sm:text-[22px] py-3 px-4 font-bold rounded-xl transition-colors duration-300 shadow-md bg-black hover:bg-green-600 hover:border hover:border-black text-white hover:brightness-110"
           onClick={placeOrder}
         >
           {placing ? "Placing..." : hasBeenPlaced ? "Placed" : "Place Order"}

@@ -44,7 +44,7 @@ userRoutes.post("/resend-password-otp", resendPasswordOtpController);
 // Password Routes
 // ----------------------
 userRoutes.post("/forgot-password", forgotPasswordController);
-userRoutes.post("/reset-password/:userId", resetPasswordController);
+userRoutes.post("/reset-password", resetPasswordController);
 
 // ----------------------
 // Update User Details

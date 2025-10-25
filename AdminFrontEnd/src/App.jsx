@@ -25,7 +25,7 @@ const DashBoardLayOut = lazy(() => import("./pages/layout/DashBoardLayOut.jsx"))
 // Loader fallback.
 const Loader = () => <p className="text-description secondary-accent-text">Loading...</p>;
 const RequireAuth = ({ children }) => {
-const { isLoggedIn } = useContext(AuthContext);
+const isLoggedIn = localStorage.getItem("userId");
   // If not logged in, redirect to /login.
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;

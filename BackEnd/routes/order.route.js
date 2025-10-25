@@ -11,7 +11,7 @@ import { ensureAuthenticatedAdmin } from "../middleware/auth.js";
 const orderRoutes = express.Router();
 // Order Routes.
 // Admin: get all orders.
-orderRoutes.get("/", ensureAuthenticatedAdmin, getAllOrders);
+orderRoutes.get("/", getAllOrders);
 // User: place a new orderItem.
 orderRoutes.post("/user/:userId", placeOrderByUserId);
 // User: get all orders by userId.
