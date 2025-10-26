@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import Axios from "../axios/axios.config.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setProduct } from "../redux/productSlice.js";
-
 function ProductUpdate() {
   const product = useSelector((state) => state.products.product);
   const dispatch = useDispatch();
@@ -15,7 +14,6 @@ function ProductUpdate() {
   const [selectedFileName, setSelectedFileName] = useState("Choose a file...");
   const { id } = useParams();
   const navigate = useNavigate();
-
   const categories = ["Electronics", "Accessories", "Home", "Shoe", "Clothing"];
   const subCategories = [
     "Men", "Women", "Kids", "Wearables", "Carryables", "Gadgets",

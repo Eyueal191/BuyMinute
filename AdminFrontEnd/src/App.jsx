@@ -10,7 +10,6 @@ import {
 // Layouts & Error.
 import RootLayout from "./pages/layout/RootLayout.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
-import { AuthContext } from "./context/AuthContext.jsx";
 // Lazy-loaded pages.
 const ProductList = lazy(() => import("./pages/ProductList.jsx"));
 const Upload = lazy(() => import("./pages/Upload.jsx"));

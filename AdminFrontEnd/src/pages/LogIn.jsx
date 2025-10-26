@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 
 function LogIn() {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
+  const [loading, setLoading] = useState(false);
   const formRef = useRef(null);
   const navigate = useNavigate();
 
@@ -16,93 +17,135 @@ function LogIn() {
     const password = formData.get("password")?.trim();
 
     if (!email || !password) {
-      toast.error("Email and password must be filled");
+      toast.error("Please fill in both email and password.");
       return;
     }
 
     try {
+      setLoading(true);
       const payload = { email, password };
-      const response = await Axios.post("/api/user/login", payload);
-      const data = response.data;
+      const { data } = await Axios.post("/api/user/login", payload);
 
       if (data.success) {
-        // Store admin info in localStorage
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("email", data.userEmail);
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("loggedIn", true);
 
-        toast.success(data.message || "Logged in successfully");
+        toast.success(data.message || "Logged in successfully!");
         formRef.current.reset();
-        navigate("/"); // Redirect to dashboard or admin panel
+        navigate("/");
       } else {
-        toast.error(data.message || "Login failed");
+        toast.error(data.message || "Login failed. Please try again.");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message || "Something went wrong");
+      toast.error(err.response?.data?.message || err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 px-4 sm:px-6 md:px-8">
-      <div className="w-full max-w-md sm:max-w-md md:max-w-lg lg:max-w-xl 2xl:max-w-2xl bg-white p-6 sm:p-8 md:p-10 rounded-xl shadow-lg border border-gray-200">
-        {/* Heading */}
-        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 text-center mb-2">
-          Admin Log In
-        </h2>
-        <p className="text-gray-600 text-sm sm:text-base md:text-base text-center mb-6">
-          Enter your admin credentials to access the dashboard
+      <div className="w-full max-w-md sm:max-w-lg md:max-w-xl bg-white p-8 sm:p-10 md:p-12 rounded-2xl shadow-2xl border border-gray-100">
+        {/* Title */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 text-center leading-tight mb-3">
+          Admin Login
+        </h1>
+        <p className="text-gray-600 text-sm sm:text-base md:text-lg text-center mb-10 leading-relaxed">
+          Enter your credentials to access your dashboard.
         </p>
 
         {/* Form */}
-        <Form ref={formRef} onSubmit={submitHandler} className="flex flex-col gap-5">
+        <Form
+          ref={formRef}
+          onSubmit={submitHandler}
+          className="flex flex-col gap-6"
+          method="post"
+        >
           {/* Email */}
-          <label htmlFor="email" className="flex flex-col text-gray-700 text-sm sm:text-base md:text-base">
-            Email
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-gray-800 font-medium text-sm sm:text-base mb-2 tracking-wide"
+            >
+              Email Address
+            </label>
             <input
               id="email"
               name="email"
               type="email"
-              placeholder="Enter your email"
-              className="mt-1 px-4 py-3 sm:py-4 md:py-4 border border-gray-300 rounded-md bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out"
+              placeholder="you@example.com"
               required
+              className="
+                w-full px-4 py-3 sm:py-3.5 md:py-4
+                border border-gray-300 rounded-lg
+                bg-gray-50 placeholder-gray-400
+                focus:outline-none focus:ring-2 focus:ring-blue-500
+                focus:border-blue-500 transition duration-200 ease-in-out
+                text-sm sm:text-base
+              "
             />
-          </label>
+          </div>
 
           {/* Password */}
-          <label htmlFor="password" className="flex flex-col text-gray-700 text-sm sm:text-base md:text-base relative">
-            Password
+          <div className="relative">
+            <label
+              htmlFor="password"
+              className="block text-gray-800 font-medium text-sm sm:text-base mb-2 tracking-wide"
+            >
+              Password
+            </label>
             <input
               id="password"
               name="password"
               type={isPasswordShown ? "text" : "password"}
-              placeholder="Enter your password"
-              className="mt-1 px-4 py-3 sm:py-4 md:py-4 border border-gray-300 rounded-md bg-gray-50 placeholder-gray-400 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out"
+              placeholder="••••••••"
               required
+              className="
+                w-full px-4 py-3 sm:py-3.5 md:py-4 pr-12
+                border border-gray-300 rounded-lg
+                bg-gray-50 placeholder-gray-400
+                focus:outline-none focus:ring-2 focus:ring-blue-500
+                focus:border-blue-500 transition duration-200 ease-in-out
+                text-sm sm:text-base
+              "
             />
             <button
               type="button"
               onClick={() => setIsPasswordShown((prev) => !prev)}
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+              className="absolute right-4 top-10 text-gray-500 hover:text-gray-700 transition-colors"
+              aria-label={isPasswordShown ? "Hide password" : "Show password"}
             >
-              {isPasswordShown ? <FaEyeSlash /> : <FaEye />}
+              {isPasswordShown ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
             </button>
-          </label>
+          </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-3 sm:py-4 md:py-4 rounded-md hover:bg-blue-700 hover:scale-105 active:scale-95 transition-transform shadow-md"
+            disabled={loading}
+            className={`
+              w-full py-3 sm:py-3.5 md:py-4 rounded-lg font-semibold text-white
+              ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}
+              shadow-md hover:shadow-lg
+              transform hover:scale-105 active:scale-95
+              transition-all duration-200 ease-in-out
+              text-base sm:text-lg md:text-xl
+            `}
           >
-            Log In
+            {loading ? "Logging in..." : "Log In"}
           </button>
 
-          <Link
-            to="/forgot-password"
-            className="text-blue-600 hover:text-blue-800 hover:underline text-center w-full mt-2"
-          >
-            Forgot Password?
-          </Link>
+          {/* Forgot Password */}
+          <div className="text-center">
+            <Link
+              to="/forgot-password"
+              className="text-blue-600 hover:text-blue-800 hover:underline text-sm sm:text-base font-medium"
+            >
+              Forgot Password?
+            </Link>
+          </div>
         </Form>
       </div>
     </div>

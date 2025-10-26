@@ -49,7 +49,6 @@ function VerifyPasswordResetOTP() {
       toast.error(error.response?.data?.message || "Resend OTP failed");
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 bg-gray-50">
       <Form

@@ -19,7 +19,7 @@ orderRoutes.get("/user/:userId", getUserOrdersByUserId);
 // User: update entire orderItem (e.g., payment info, addresses, etc).
 orderRoutes.put("/user/:userId", updateUserOrderByUserId);
 // Order Item: update a user orderItem by itemId.
-orderRoutes.put("/user/:userId/:itemId", updateOrderItemById);
+orderRoutes.put("/:itemId", updateOrderItemById);
 // Order Item: delete a specific item from a user’s order.
 orderRoutes.delete("/user/:userId/", deleteOrderItemByUserId);
 export default orderRoutes;

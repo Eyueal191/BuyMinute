@@ -235,7 +235,7 @@ function Shop() {
                   return (
                     <div
                       key={virtualRow.key}
-                      className="px-20 sm:px-2 grid gap-4 md:gap-6 py-3"
+                      className="px-20 sm:px-2 grid gap-4 md:gap-6 py-3 mx-auto"
                       style={{
                         gridTemplateColumns: `repeat(${columns}, 1fr)`,
                         position: "absolute",

@@ -1,8 +1,8 @@
 import axios from "axios";
 // ✅ Create Axios instance
 const Axios = axios.create({
-  baseURL:"https://buyminuteserver.onrender.com",
-  timeout: 10000,
+  baseURL:"http://localhost:5000",
+  timeout: 100000,
   withCredentials: true, // 🔥 ensures cookies (refreshToken) are sent automatically
 });
 // ✅ Request interceptor – attach access token

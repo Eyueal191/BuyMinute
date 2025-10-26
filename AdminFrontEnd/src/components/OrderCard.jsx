@@ -1,9 +1,7 @@
 import React from "react";
 import OrderItemCard from "./OrderItemCard.jsx";
-
 function OrderCard({ order, setUpdate }) {
   const { user, items } = order;
-
   return (
     <div
       className="

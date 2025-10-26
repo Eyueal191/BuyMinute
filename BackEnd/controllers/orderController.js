@@ -145,13 +145,16 @@ const deleteOrderItemByUserId = async (req, res) => {
   }
 };
 
-// 5. Update order by ID.
+// 5. Update order by ID. for the admin
 
 const updateOrderItemById = async (req, res) => {
   try {
     const { itemId } = req.params;
     const { userId, itemUpdate } = req.body;
     // Find the order
+    console.log("itemId",itemId);
+    console.log("userId", userId);
+    console.log("itemUpdate", itemUpdate)
     const order = await Order.findOne({ user: userId });
     if (!order) {
       return res.status(404).json({ success: false, message: "Order not found" });

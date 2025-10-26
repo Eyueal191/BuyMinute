@@ -10,6 +10,7 @@ import { SiContactlesspayment } from "react-icons/si";
 import Loading from "../components/Loading.jsx";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 function Home() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -64,8 +65,8 @@ function Home() {
 
   const renderCategory = (products, page, setPage, title) => (
     <div className="flex flex-col items-center">
-      <h2 className="text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] font-semibold border border-gray-300 rounded-md px-6 py-2 mb-6 min-w-[20vw] text-center font-title">
-        <Title text1={title} />
+      <h2 className="bg-white shadow-md text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] font-semibold border border-gray-300 rounded-md px-6 py-2 mb-6 min-w-[20vw] text-center font-title">
+        <Title text1={title} bg="bg-white" text1Color="text-black" />
       </h2>
       <div className="flex items-center gap-4">
         <button
@@ -122,9 +123,10 @@ function Home() {
             <Title text1="PRODUCTS" addSolidLineAfter className="font-title" />
           </div>
           <div className="mt-6">
-            <button onClick={()=>{
-              navigate("/shop")
-            }} className="bg-blue-500 font-bold text-white text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px] 2xl:text-[26px] px-6 py-3 rounded-md hover:bg-blue-700 transition duration-300">
+            <button
+              onClick={() => navigate("/shop")}
+              className="bg-blue-500 font-bold text-white text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px] 2xl:text-[26px] px-6 py-3 rounded-md hover:bg-blue-700 transition duration-300"
+            >
               SHOP NOW
             </button>
           </div>
@@ -139,12 +141,12 @@ function Home() {
       </section>
 
       {/* Policy Section */}
-      <section className="mt-12 py-12 flex flex-col align-strech border border-gray-50 w-[70vw] mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 xxl:px-12 py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12 xxl:py-14">
-        <div className="max-w-full ml-[1vw] mb-8 text-lef text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] font-title">
+      <section className="mt-12 py-12 flex flex-col align-stretch w-[70vw] mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 xxl:px-12">
+        <div className="max-w-full ml-[1vw] mb-8 text-left text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] font-title">
           <Title text1="Our" text2="Policy" addSolidLineAfter={true} />
         </div>
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8 w-full">
-          <div className="flex flex-col border border-gray-300 text-center px-4 py-6">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
+          <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
             <div className="text-5xl text-green-500">
               <LiaShippingFastSolid />
             </div>
@@ -155,7 +157,7 @@ function Home() {
               On orders over $50
             </p>
           </div>
-          <div className="flex flex-col text-center border border-gray-300 px-4 py-6">
+          <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
             <div className="text-5xl text-blue-500">
               <BiSupport />
             </div>
@@ -166,7 +168,7 @@ function Home() {
               We're here to help anytime
             </p>
           </div>
-          <div className="flex flex-col text-center border border-gray-200 px-4 py-6">
+          <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
             <div className="text-5xl text-yellow-400">
               <SiContactlesspayment />
             </div>
@@ -182,4 +184,5 @@ function Home() {
     </div>
   );
 }
+
 export default Home;

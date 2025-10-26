@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useSearchParams, Form, useNavigate } from "react-router-dom";
 import Axios from "../axios/axios.config.js";
-import { AuthContext } from "../context/AuthContext.jsx";
 import { toast } from "react-toastify";
 
 function VerifyPasswordResetOTP() {
-  const { email } = useContext(AuthContext);
+  const email = localStorage.getItem("email")
   const [searchParams] = useSearchParams();
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);

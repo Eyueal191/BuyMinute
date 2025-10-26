@@ -76,7 +76,7 @@ function PasswordReset() {
             />
             <button
               type="button"
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+              className="absolute top-[55px] right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
               onClick={() => setIsPasswordShown((prev) => !prev)}
             >
               {isPasswordShown ? <FaEyeSlash /> : <FaEye />}
@@ -94,7 +94,7 @@ function PasswordReset() {
             />
             <button
               type="button"
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+              className="absolute top-[55px] right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
               onClick={() => setIsCPasswordShown((prev) => !prev)}
             >
               {isCPasswordShown ? <FaEyeSlash /> : <FaEye />}

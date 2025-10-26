@@ -1,10 +1,22 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { toast } from "react-toastify";
 import Axios from "../axios/axios.config.js";
-import ProductCard from "../components/ProductCard.jsx";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useSelector, useDispatch } from "react-redux";
 import { setProductsList } from "../redux/productSlice.js";
+
+// Lazy load ProductCard
+const ProductCard = lazy(() => import("../components/ProductCard.jsx"));
+
+// Skeleton loader for ProductCard
+const ProductCardLoader = () => (
+  <div className="border-b border-gray-200 rounded-lg shadow-sm p-4 animate-pulse flex flex-col gap-2">
+    <div className="h-40 bg-gray-300 rounded-md"></div>
+    <div className="h-5 bg-gray-300 rounded w-3/4"></div>
+    <div className="h-5 bg-gray-300 rounded w-1/2"></div>
+    <div className="h-5 bg-gray-300 rounded w-1/4"></div>
+  </div>
+);
 
 function ProductList() {
   const products = useSelector((state) => state.products.productsList);
@@ -87,14 +99,16 @@ function ProductList() {
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
                 >
-                  <ProductCard
-                    id={product._id}
-                    name={product.name}
-                    images={product.images}
-                    price={product.price}
-                    quantity={product.quantity}
-                    className="border-b border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all"
-                  />
+                  <Suspense fallback={<ProductCardLoader />}>
+                    <ProductCard
+                      id={product._id}
+                      name={product.name}
+                      images={product.images}
+                      price={product.price}
+                      quantity={product.quantity}
+                      className="border-b border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all"
+                    />
+                  </Suspense>
                 </div>
               );
             })}
