@@ -110,10 +110,10 @@ function OrderItemCard({ item, user, setUpdate }) {
         </div>
 
         {/* Update Button */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 mt-[20px]">
           <button
             onClick={submitUpdate}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md px-6 py-2 shadow-md hover:shadow-lg active:scale-95 transition-all duration-200 mt-4 md:mt-0"
+            className="bg-blue-600 mt-[50px] hover:bg-blue-700 text-white text-sm font-medium rounded-md px-6 py-2 shadow-md hover:shadow-lg active:scale-95 transition-all duration-200 mt-4 md:mt-0"
             disabled={updating}
           >
             {updating ? "Updating..." : "Update"}
