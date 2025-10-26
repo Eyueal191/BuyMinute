@@ -44,7 +44,9 @@ function OrderList() {
       </div>
     );
   }
-
+if(!orderList.length) return   <div className="font-semibold text-xl text-center py-6 text-gray-700">
+        No Orders...
+      </div>
   return (
     <div className="space-y-6 p-4 sm:p-6 md:p-8 lg:p-10">
       {orderList.length ? (

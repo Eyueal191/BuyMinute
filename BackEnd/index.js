@@ -22,10 +22,9 @@ dotenv.config();
 
 const app = express();
 
-// --------------------
+// --------------------s
 // Middleware
-// --------------------
-
+// --------------------s
 // ✅ Allow all origins dynamically (for development/testing)
 app.use(
   cors({
