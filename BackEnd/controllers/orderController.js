@@ -1,4 +1,4 @@
-import Order from "../models/Order.js";
+import Order from "../models/order.js";
 import Stripe from "stripe";
 import _ from "lodash";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);

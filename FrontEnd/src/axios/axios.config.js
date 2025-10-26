@@ -2,7 +2,7 @@ import axios from "axios";
 // ✅ Create Axios instance
 const Axios = axios.create({
   baseURL:"http://localhost:5000",
-  timeout: 100000,
+  timeout: 600000, // 10 minutes
   withCredentials: true, // 🔥 ensures cookies (refreshToken) are sent automatically
 });
 // ✅ Request interceptor – attach access token
