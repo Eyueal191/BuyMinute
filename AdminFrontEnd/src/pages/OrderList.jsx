@@ -48,8 +48,17 @@ if(!orderList.length) return   <div className="font-semibold text-xl text-center
         No Orders...
       </div>
   return (
-    <div className="space-y-6 p-4 sm:p-6 md:p-8 lg:p-10">
-      {orderList.length ? (
+    <div>
+<div className="flex items-center mb-6">
+  <h1 className="text-2xl font-bold text-gray-800 mr-4">
+    Orders List
+  </h1>
+  <hr className="border-t-4 border-gray-600 w-[80px] mt-[20px]" />
+</div>
+
+
+      <div>
+              {orderList.length ? (
         orderList.map((order) => (
           <OrderCard
             key={order._id}
@@ -63,6 +72,8 @@ if(!orderList.length) return   <div className="font-semibold text-xl text-center
           No orders found.
         </div>
       )}
+      </div>
+
     </div>
   );
 }
