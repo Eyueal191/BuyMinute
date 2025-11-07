@@ -1,7 +1,12 @@
 import React from "react";
 import OrderItemCard from "./OrderItemCard.jsx";
+
 function OrderCard({ order, setUpdate }) {
   const { user, items } = order;
+
+  // If items are missing, render nothing
+  if (!items?.length) return null;
+
   return (
     <div
       className="
@@ -16,7 +21,7 @@ function OrderCard({ order, setUpdate }) {
         <OrderItemCard
           key={item._id}
           item={item}
-          user={user}
+          user={user || { name: "Unknown User" }}
           setUpdate={setUpdate}
         />
       ))}

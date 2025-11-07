@@ -4,16 +4,15 @@ import Axios from "../axios/axios.config";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setProduct } from "../redux/productSlice.js";
-
 function ProductDetails() {
   let product = useSelector((state) => state.products.product);
   let dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-
   const fetchProductById = async (id) => {
     try {
+      console.log("id", id)
       setIsLoading(true);
       const { data } = await Axios.get(`/api/product/${id}`);
       if (data.success) {

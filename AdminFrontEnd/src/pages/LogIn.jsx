@@ -75,6 +75,7 @@ function LogIn() {
               id="email"
               name="email"
               type="email"
+              defaultValue="eyuealayalew191@gmail.com"
               placeholder="you@example.com"
               required
               className="
@@ -100,6 +101,7 @@ function LogIn() {
               id="password"
               name="password"
               type={isPasswordShown ? "text" : "password"}
+              defaultValue="090904Eyueal***"
               placeholder="••••••••"
               required
               className="

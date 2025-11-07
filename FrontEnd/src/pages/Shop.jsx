@@ -39,6 +39,7 @@ function Shop() {
   const [priceMin, setPriceMin] = useState(0);
   const [columns, setColumns] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [showFilter, setShowFilter] = useState(false); // 🔥 new state
 
   const parentRef = useRef();
   const products = useSelector((state) => state.product.products) || [];
@@ -112,7 +113,7 @@ function Shop() {
   return (
     <div className="w-full py-8 bg-gray-50 min-h-screen px-4 md:px-6 lg:px-8">
       {/* Search Bar */}
-      <div className="w-full flex justify-center mb-8">
+      <div className="w-90 mx-auto sm:w-full flex justify-center mb-8">
         <div className="relative w-full max-w-md sm:max-w-lg md:max-w-xl">
           <input
             type="text"
@@ -127,91 +128,103 @@ function Shop() {
         </div>
       </div>
 
+      {/* 🔥 Show/Hide Filter Button (Mobile Only) */}
+      <div className="sm:hidden flex justify-center mb-6">
+        <button
+          onClick={() => setShowFilter((prev) => !prev)}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-indigo-700 transition-all duration-200"
+        >
+          {showFilter ? "Hide Filters" : "Show Filters"}
+        </button>
+      </div>
+
       <div className="w-full flex flex-col sm:flex-row gap-6 md:gap-8">
-        {/* Sidebar filters */}
-        <div className="w-full sm:w-[320px] bg-white sm:bg-gray-700 sm:text-white p-[18px] md:p-[20px] rounded-xl border border-gray-200 sm:border-gray-600 shadow-md">
-          <div className="px-2 my-4">
-            <Title
-              text1="Filter"
-              addSolidLineAfter={true}
-              text1Color={columns === 1 ? "text-black" : "text-white"}
-              lineColor={columns === 1 ? "bg-black" : "bg-white"}
-            />
-          </div>
+        {/* Sidebar filters (hidden on mobile unless toggled) */}
+        {(showFilter || window.innerWidth >= 640) && (
+          <div className="w-full sm:w-[320px] bg-white sm:bg-gray-700 sm:text-white p-[18px] md:p-[20px] rounded-xl border border-gray-200 sm:border-gray-600 shadow-md">
+            <div className="px-2 my-4">
+              <Title
+                text1="Filter"
+                addSolidLineAfter={true}
+                text1Color={columns === 1 ? "text-black" : "text-white"}
+                lineColor={columns === 1 ? "bg-black" : "bg-white"}
+              />
+            </div>
 
-          {/* Categories */}
-          <div className="grid grid-cols-2 sm:grid-cols-1 gap-4 md:gap-5 px-2">
-            {[
-              {
-                title: "Electronics",
-                items: [
-                  "Smartphones",
-                  "Laptops and Computers",
-                  "Headphones and Audio",
-                  "Wearables",
-                  "Carryables",
-                  "Gadgets",
-                ],
-              },
-              {
-                title: "Home & Kitchen",
-                items: ["Appliances", "Furniture", "Home Decor", "Kitchenware"],
-              },
-              { title: "Shoe", items: ["Men", "Women", "Kids"] },
-              { title: "Clothing", items: ["Men", "Women", "Kids"] },
-              { title: "Accessories", items: ["Belts", "Bags", "Jewelry"] },
-            ].map((section, i) => (
-              <div
-                key={i}
-                className="border border-gray-200 sm:border-gray-500 rounded-xl p-[16px] md:p-[18px] bg-white sm:bg-gray-800 hover:shadow-md transition-shadow duration-200"
-              >
+            {/* Categories */}
+            <div className="grid grid-cols-2 sm:grid-cols-1 gap-4 md:gap-5 px-2">
+              {[
+                {
+                  title: "Electronics",
+                  items: [
+                    "Smartphones",
+                    "Laptops and Computers",
+                    "Headphones and Audio",
+                    "Wearables",
+                    "Carryables",
+                    "Gadgets",
+                  ],
+                },
+                {
+                  title: "Home & Kitchen",
+                  items: ["Appliances", "Furniture", "Home Decor", "Kitchenware"],
+                },
+                { title: "Shoe", items: ["Men", "Women", "Kids"] },
+                { title: "Clothing", items: ["Men", "Women", "Kids"] },
+                { title: "Accessories", items: ["Belts", "Bags", "Jewelry"] },
+              ].map((section, i) => (
+                <div
+                  key={i}
+                  className="border border-gray-200 sm:border-gray-500 rounded-xl p-[16px] md:p-[18px] bg-white sm:bg-gray-800 hover:shadow-md transition-shadow duration-200"
+                >
+                  <h3 className="text-[16px] sm:text-[18px] font-semibold mb-3 text-gray-800 sm:text-gray-100 font-title">
+                    {section.title}
+                  </h3>
+                  {section.items.map((name) => (
+                    <label
+                      key={name}
+                      className="flex items-center gap-2 mb-2 text-[14px] sm:text-[16px] text-gray-700 sm:text-gray-200"
+                    >
+                      <input
+                        type="checkbox"
+                        name={name}
+                        onChange={changeHandler}
+                        className="accent-indigo-500 cursor-pointer"
+                      />
+                      {name}
+                    </label>
+                  ))}
+                </div>
+              ))}
+
+              {/* Price Range */}
+              <div className="border border-gray-200 sm:border-gray-500 rounded-xl p-[16px] md:p-[18px] bg-white sm:bg-gray-800">
                 <h3 className="text-[16px] sm:text-[18px] font-semibold mb-3 text-gray-800 sm:text-gray-100 font-title">
-                  {section.title}
+                  Price Range
                 </h3>
-                {section.items.map((name) => (
-                  <label
-                    key={name}
-                    className="flex items-center gap-2 mb-2 text-[14px] sm:text-[16px] text-gray-700 sm:text-gray-200"
-                  >
-                    <input
-                      type="checkbox"
-                      name={name}
-                      onChange={changeHandler}
-                      className="accent-indigo-500 cursor-pointer"
-                    />
-                    {name}
-                  </label>
-                ))}
-              </div>
-            ))}
-
-            {/* Price Range */}
-            <div className="border border-gray-200 sm:border-gray-500 rounded-xl p-[16px] md:p-[18px] bg-white sm:bg-gray-800">
-              <h3 className="text-[16px] sm:text-[18px] font-semibold mb-3 text-gray-800 sm:text-gray-100 font-title">
-                Price Range
-              </h3>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  className="w-20 rounded-md px-2 py-1 text-base border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                  value={priceMin}
-                  onChange={(e) => setPriceMin(Number(e.target.value))}
-                />
-                <input
-                  type="number"
-                  placeholder="Max"
-                  className="w-20 rounded-md px-2 py-1 text-base border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                  value={priceMax}
-                  onChange={(e) => setPriceMax(Number(e.target.value) || "")}
-                />
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    className="w-20 rounded-md px-2 py-1 text-base border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    value={priceMin}
+                    onChange={(e) => setPriceMin(Number(e.target.value))}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    className="w-20 rounded-md px-2 py-1 text-base border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    value={priceMax}
+                    onChange={(e) => setPriceMax(Number(e.target.value) || "")}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Product List */}
-        <div className="flex-1 bg-white rounded-xl border border-gray-200 shadow-md p-[2px] md:p-[6px]">
+        <div className="w-90 sm:w-full mx-auto flex-1 bg-white rounded-xl border border-gray-200 shadow-md p-[2px] md:p-[6px]">
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <Loading />
@@ -219,7 +232,7 @@ function Shop() {
           ) : (
             <div
               ref={parentRef}
-              className="relative overflow-auto w-[400px]  sm:w-[95%] mx-auto border border-gray-50 h-[150vh] py-4 sm:px-4 scrollbar-thin scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400"
+              className="relative overflow-auto w-[400px] sm:w-[95%] mx-auto border border-gray-50 h-[150vh] py-4 sm:px-4 scrollbar-thin scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400"
             >
               <div
                 style={{
@@ -235,7 +248,7 @@ function Shop() {
                   return (
                     <div
                       key={virtualRow.key}
-                      className="px-20 sm:px-2 grid gap-4 md:gap-6 py-3 mx-auto"
+                      className="px-10 sm:px-2 grid gap-4 md:gap-6 py-3 mx-auto"
                       style={{
                         gridTemplateColumns: `repeat(${columns}, 1fr)`,
                         position: "absolute",

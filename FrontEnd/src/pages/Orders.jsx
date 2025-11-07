@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Axios from "../axios/axios.config.js";
 import toast from "react-hot-toast";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -7,70 +7,74 @@ import Title from "../components/Title.jsx";
 import Loading from "../components/Loading.jsx";
 
 function Orders() {
-  const [userOrders, setUserOrders] = useState(null); // start with null
+  const [userOrders, setUserOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const userId = localStorage.getItem("userId");
-  const parentRef = useRef(null);
+  const parentRef = useRef();
 
-  const rowVirtualizer = useVirtualizer({
-    count: userOrders?.items?.length || 5, // show 5 skeletons if loading
-    estimateSize: () => 170,
-    overscan: 2,
-    getScrollElement: () => parentRef.current,
-  });
-
-  const getUserOrders = async () => {
+  const fetchUserOrders = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await Axios.get(`/api/order/user/${userId}`);
-      const data = res.data;
-      if (data.success) {
-        setUserOrders(data.orders || null);
-      }
+      const response = await Axios.get(`/api/order/user/${userId}`);
+      const data = response.data;
+      if (data.success) setUserOrders(data.orders?.items || []);
+      else setUserOrders([]);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to get user orders");
+      toast.error(error.response?.data?.message || "Failed to load orders");
+      setUserOrders([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
-    if (userId) getUserOrders();
-  }, [userId, refresh]);
+    if (userId) fetchUserOrders();
+  }, [fetchUserOrders, refresh]);
+
+  // 🧠 Virtualizer setup (single column)
+  const rowVirtualizer = useVirtualizer({
+    count: userOrders.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () =>180, // height estimate for each order card
+    overscan: 3,
+  });
 
   return (
-    <div className="min-h-screen w-full p-4 flex flex-col items-center gap-6 py-20 bg-gray-50">
-      <h1 className="text-left self-start ml-[13vw]">
+    <div className="min-h-screen w-full flex flex-col items-center gap-8 py-20 px-4 bg-gray-50">
+      {/* 🧩 Title */}
+      <div className="w-[95%] sm:w-4/5 max-w-6xl mx-auto text-left">
         <Title
-          text1="List of Your Order's"
-          text2="Details"
+          text1="My Orders"
+          text2="Overview"
+          text1Color="text-black"
+          text2Color="text-blue-500"
           addSolidLineAfter={true}
-          lineColor="bg-gray-500"
+          lineColor="bg-blue-500"
         />
-      </h1>
+      </div>
 
+      {/* 🧾 Orders Container */}
       <div
         ref={parentRef}
-        className="relative overflow-auto h-screen w-[95%] sm:w-4/5 max-w-6xl mx-auto bg-white rounded-xl shadow-sm py-10"
+        className="relative overflow-auto h-[150vh] w-[95%] sm:w-4/5 max-w-6xl bg-white rounded-xl shadow-md border border-gray-200 p-4"
       >
-        {loading && !userOrders ? (
-          // Full-page loader for initial fetch
+        {loading ? (
           <div className="flex justify-center items-center h-full">
             <Loading />
           </div>
-        ) : !userOrders || userOrders.items?.length === 0 ? (
-          <p className="text-center text-gray-500">No order found.</p>
+        ) : userOrders.length === 0 ? (
+          <p className="text-center text-gray-500 py-10">No orders found.</p>
         ) : (
           <div
             style={{
               position: "relative",
               height: `${rowVirtualizer.getTotalSize()}px`,
+              width: "100%",
             }}
           >
             {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-              const item = userOrders.items?.[virtualRow.index];
-
+              const item = userOrders[virtualRow.index];
               return (
                 <div
                   key={item?._id || virtualRow.index}
@@ -81,13 +85,9 @@ function Orders() {
                     width: "100%",
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
+                  className="pb-4"
                 >
-                  {loading && !item ? (
-                    // Skeleton loader for virtualized items
-                    <div className="h-40 w-full bg-gray-200 animate-pulse rounded-xl my-2" />
-                  ) : (
-                    <OrderCard item={item} setRefresh={setRefresh} />
-                  )}
+                  <OrderCard item={item} setRefresh={setRefresh} />
                 </div>
               );
             })}

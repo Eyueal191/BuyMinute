@@ -20,9 +20,9 @@ function ProductUpdate() {
     "Headphones and Audio", "Laptops and Computers", "Smartphones",
     "Appliances", "Furniture", "Home Decor", "Kitchenware",
   ];
-
   const fetchProductById = async (id) => {
     try {
+      console.log("id", id);
       setIsLoading(true);
       const { data } = await Axios.get(`/api/product/${id}`);
       if (data.success) {

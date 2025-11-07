@@ -133,6 +133,23 @@ function Home() {
         </div>
       </section>
 
+      {/* 🏆 Best Seller Section */}
+      <section className="mt-12 flex justify-center items-center">
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <Title text1="Loading" text2="Best Sellers..." text1Color="text-gray-600" text2Color="text-gray-800" />
+          </div>
+        ) : (
+          <Title
+            text1="Our"
+            text2="Latest Products"
+            text1Color="text-black"
+            text2Color="text-blue-600"
+            addSolidLineAfter
+          />
+        )}
+      </section>
+
       {/* Products by Category */}
       <section className="mt-12 max-w-7xl mx-auto px-4 space-y-12">
         {renderCategory(electronics, elePage, setElePage, "Electronics")}
