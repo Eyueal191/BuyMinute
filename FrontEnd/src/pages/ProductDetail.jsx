@@ -73,6 +73,15 @@ function ProductDetail() {
     if (adding) return;
     if (!userId) return navigate("/login");
 
+    const totalQuantity =
+      product.sizeOption?.reduce((sum, opt) => sum + (opt.stock || 0), 0) ||
+      product.quantity;
+
+    if (totalQuantity <= 0) {
+      toast.error("This product is currently out of stock, sorry!");
+      return;
+    }
+
     setAdding(true);
     try {
       if (product.sizeOption?.length) {
@@ -111,6 +120,11 @@ function ProductDetail() {
             ? product.quantity
             : defaultQuantity;
 
+        if (qty <= 0) {
+          toast.error("This product is currently out of stock, sorry!");
+          return;
+        }
+
         const newItem = { product: product._id, quantity: qty, sizeOption: null };
         const response = await Axios.post("/api/cart/", { newItem, userId });
         const data = response.data;
@@ -125,9 +139,7 @@ function ProductDetail() {
       console.error(error);
       toast.error("Something went wrong while adding to cart");
     } finally {
-      setTimeout(() => {
-        setAdding(false);
-      }, 10000);
+      setTimeout(() => setAdding(false), 10000);
     }
   };
 
@@ -179,17 +191,15 @@ function ProductDetail() {
 
         {/* Product Info */}
         <div className="flex-1 flex flex-col gap-3 md:gap-4">
-          {/* H1 */}
           <h1 className="text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-bold text-black leading-tight">
             {product.name}
           </h1>
 
-          {/* H2 */}
           <h2 className="text-[16px] sm:text-[18px] md:text-[20px] font-semibold text-gray-900">
             Price: <span className="text-indigo-600">${product.price}</span>
           </h2>
 
-          {/* Size Options */}
+          {/* Sizes */}
           {product.sizeOption?.length > 0 ? (
             <div className="mt-3">
               <h3 className="text-[14px] sm:text-[16px] md:text-[18px] font-medium mb-2 text-gray-800">
@@ -251,13 +261,13 @@ function ProductDetail() {
             </div>
           )}
 
-          {/* Stock Info */}
           <h3 className="text-[14px] sm:text-[16px] md:text-[18px] font-medium mt-3 text-gray-800">
             Total Available:{" "}
-            <span className="text-indigo-600 font-semibold">{totalQuantity}</span>
+            <span className="text-indigo-600 font-semibold">
+              {totalQuantity}
+            </span>
           </h3>
 
-          {/* Description */}
           {product.description && (
             <p className="text-[14px] md:text-[16px] text-gray-700 mt-2 leading-relaxed">
               {product.description}
@@ -267,13 +277,19 @@ function ProductDetail() {
           {/* Buttons */}
           <div className="flex flex-wrap gap-3 md:gap-4 mt-5">
             <button
-              className="bg-indigo-600 text-white px-[18px] py-[8px] rounded-md font-semibold hover:bg-indigo-700 active:scale-95 disabled:opacity-70 transition-all duration-300 shadow-sm hover:shadow-md"
+              disabled={totalQuantity <= 0}
+              className={`px-[18px] py-[8px] rounded-md font-semibold transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 ${
+                totalQuantity <= 0
+                  ? "bg-gray-400 text-white cursor-not-allowed"
+                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+              }`}
               onClick={addToCart}
             >
-              Add To Cart
+              {totalQuantity <= 0 ? "Out of Stock" : "Add To Cart"}
             </button>
+
             <button
-              className="border border-indigo-600 text-indigo-600 px-[18px] py-[8px] rounded-md font-semibold hover:bg-indigo-50 active:scale-95 disabled:opacity-70 transition-all duration-300 shadow-sm hover:shadow-md"
+              className="border border-indigo-600 text-indigo-600 px-[18px] py-[8px] rounded-md font-semibold hover:bg-indigo-50 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-md"
               onClick={() => navigate(-1)}
             >
               Back To Shop

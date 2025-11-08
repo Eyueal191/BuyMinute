@@ -16,64 +16,82 @@ import jwt from "jsonwebtoken";
 dotenv.config()// to make enviromental variable to be accessible.
 // 1. Sign Up Controller
 const signUpController = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({
+        message: "Email has already registered",
+        error: true,
+        success: false,
+      });
+    }
+
+    // Hash password and create new user
+    const hashedPassword = await hashPassword(password);
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    if (email === process.env.ADMIN_EMAIL) {
+      newUser.role = "ADMIN";
+    }
+
+    // Save new user first to get ID
+    const savedUser = await newUser.save();
+    const userId = savedUser._id;
+
+    // Generate tokens
+    const accessToken = generateAccessToken(userId);
+    const refreshToken = generateRefreshToken(userId);
+
+    // Generate OTP and expiry
+    const verifyEmailOTP = Math.floor(Math.random() * 9000 + 1000);
+    const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+    // Save OTP and tokens in DB first (like Forgot Password)
+    await User.findByIdAndUpdate(userId, {
+      accessToken,
+      refreshToken,
+      verifyEmailOTP,
+      verifyEmailOTPExpiry: otpExpiry,
+    });
+
+    // Send OTP email
     try {
-        const {
-            name,
-            email,
-            password
-        } = req.body;
-
-        const existingUser = await User.findOne({
-            email
-        });
-        if (existingUser) {
-            return res.status(409).json({
-                message: "Email has already registered",
-                error: true,
-                success: false,
-            });
-        }
-        const hashedPassword = await hashPassword(password);
-        const newUser = new User({
-            name,
-            email,
-            password: hashedPassword
-        });
-  if(email===process.env.ADMIN_EMAIL) {
-        newUser.role = "ADMIN";
-    
+      await sendEmail({
+        to: email,
+        subject: "Verify Your Email",
+        html: otpTemplate(verifyEmailOTP),
+      });
+      console.log("OTP sent to email:", email);
+    } catch (err) {
+      console.error("Failed to send OTP email:", err);
+      return res.status(500).json({
+        message: "Failed to send OTP email",
+        error: true,
+        success: false,
+      });
     }
-        const savedUser = await newUser.save();
 
-        const userId = savedUser._id;
-        const accessToken = generateAccessToken(userId);
-        const refreshToken = generateRefreshToken(userId);
-        const verifyEmailOTP = Math.floor(Math.random() * 9000 + 1000);
-        const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
-        const linkUrl = `${process.env.FRONTEND_URL}verify-email-otp?code=${verifyEmailOTP}`
-        await sendEmail({
-            to: email,
-            subject: "Verify your email address",
-            html: otpTemplate(verifyEmailOTP, linkUrl),
-        });
-        await User.findByIdAndUpdate(userId, {
-            accessToken,
-            refreshToken,
-            verifyEmailOTP,
-            verifyEmailOTPExpiry: otpExpiry,
-        });
-        res.status(201).json({
-            message: "Registered successfully",
-            error: false,
-            success: true,
-            email
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: error.message || "Internal Server Error"
-        });
-    }
+    // Respond success
+    res.status(201).json({
+      message: "Registered successfully, OTP sent to email",
+      error: false,
+      success: true,
+      email,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || "Internal Server Error",
+    });
+  }
 };
+
 // 2. Log In Controller
 const logInController = async (req, res) => {
   try {

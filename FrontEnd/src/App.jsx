@@ -94,8 +94,8 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<LogIn />} />
-        <Route path="/signup" element={<SignUp />} action={signUpAction} />
-        <Route path="/verify-email-otp" element={<VerifyEmailOTP />} action={verifyEmailOtpAction} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/verify-email-otp/:email" element={<VerifyEmailOTP />} />
         <Route path="/verify-password-otp" element={<VerifyResetPasswordOTP />} action={verifyPasswordResetOtpAction} />
         <Route path="/forgot-password" element={<ForgotPassword />} action={forgotPasswordAction} />
         <Route path="/password-reset" element={<PasswordReset />} action={passwordResetAction} />

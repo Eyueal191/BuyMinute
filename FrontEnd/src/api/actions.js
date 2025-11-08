@@ -23,7 +23,7 @@ const signUpAction = async ({
             email,
             password
         }
-        const response = await Axios.post("http://localhost:8080/api/user/signup", payLoad)
+        const response = await Axios.post("/api/user/signup", payLoad)
         let data = response.data;
         return data
     } catch (error) {

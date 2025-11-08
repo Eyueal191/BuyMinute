@@ -2,14 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { Form, Link, useActionData, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
-
 function PasswordReset() {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const [isCPasswordShown, setIsCPasswordShown] = useState(false);
   const formRef = useRef(null);
   const navigate = useNavigate();
   const data = useActionData();
-
   // Handle response from action
   useEffect(() => {
     if (data) {
